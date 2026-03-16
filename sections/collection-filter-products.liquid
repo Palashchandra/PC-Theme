@@ -1,0 +1,321 @@
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'section-collection-filter-products.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'collection-filter-products.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign selected_collections_count = 0
+  assign has_products = false
+
+  case section.settings.columns_mobile
+    when '1'
+      assign mobile_column_class = 'col-12'
+    else
+      assign mobile_column_class = 'col-6'
+  endcase
+
+  case section.settings.columns_desktop
+    when 2
+      assign desktop_column_class = 'col-lg-6'
+    when 3
+      assign desktop_column_class = 'col-lg-4'
+    else
+      assign desktop_column_class = 'col-lg-3'
+  endcase
+
+  assign product_column_classes = mobile_column_class | append: ' col-md-6 ' | append: desktop_column_class
+
+  for block in section.blocks
+    assign selected_collection = block.settings.collection
+    if selected_collection != blank
+      assign selected_collections_count = selected_collections_count | plus: 1
+      if selected_collection.all_products_count > 0
+        assign has_products = true
+      endif
+    endif
+  endfor
+-%}
+
+<section
+  id="CollectionFilterProducts-{{ section.id }}"
+  class="collection-filter-products color-{{ section.settings.color_scheme }} gradient"
+  data-collection-filter-products
+>
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.title != blank or section.settings.description != blank or selected_collections_count > 0 -%}
+      <div class="collection-filter-products__header">
+        {%- if section.settings.title != blank -%}
+          <h2 class="collection-filter-products__title inline-richtext">{{ section.settings.title }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.description != blank -%}
+          <div class="collection-filter-products__description rte">
+            {{ section.settings.description }}
+          </div>
+        {%- endif -%}
+
+        {%- if selected_collections_count > 0 -%}
+          <div class="collection-filter-products__filters" role="toolbar" aria-label="Collection filters">
+            <button
+              type="button"
+              class="collection-filter-products__filter is-active"
+              data-collection-filter-button
+              data-filter="*"
+              aria-pressed="true"
+            >
+              {{ section.settings.all_label | escape }}
+            </button>
+
+            {%- for block in section.blocks -%}
+              {%- if block.settings.collection != blank -%}
+                <button
+                  type="button"
+                  class="collection-filter-products__filter"
+                  data-collection-filter-button
+                  data-filter=".filter-{{ block.id }}"
+                  aria-pressed="false"
+                  {{ block.shopify_attributes }}
+                >
+                  {%- if block.settings.label != blank -%}
+                    {{ block.settings.label | escape }}
+                  {%- else -%}
+                    {{ block.settings.collection.title | escape }}
+                  {%- endif -%}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if has_products -%}
+      <div class="collection-filter-products__grid row" data-collection-filter-grid>
+        {%- for block in section.blocks -%}
+          {%- assign selected_collection = block.settings.collection -%}
+          {%- if selected_collection != blank -%}
+            {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
+              <div
+                class="collection-filter-products__item {{ product_column_classes }} filter-{{ block.id }}"
+                data-product-handle="{{ product.handle }}"
+              >
+                <div class="collection-filter-products__card">
+                  <a href="{{ product.url }}" class="collection-filter-products__image-link">
+                    <div class="collection-filter-products__image-wrapper global-media-settings">
+                      {%- if product.featured_media != blank -%}
+                        {{
+                          product.featured_media
+                          | image_url: width: 900
+                          | image_tag:
+                            class: 'collection-filter-products__image',
+                            loading: 'lazy',
+                            widths: '375, 550, 750, 900',
+                            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                            width: product.featured_media.width,
+                            height: product.featured_media.height,
+                            alt: product.featured_media.alt | default: product.title | escape
+                        }}
+                      {%- else -%}
+                        {{ 'product-1' | placeholder_svg_tag: 'collection-filter-products__placeholder placeholder-svg' }}
+                      {%- endif -%}
+                    </div>
+                  </a>
+
+                  <div class="collection-filter-products__content">
+                    <h4 class="collection-filter-products__card-title">
+                      <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                    </h4>
+
+                    <div class="collection-filter-products__price">
+                      {% render 'price', product: product, price_class: '' %}
+                    </div>
+
+                    <a
+                      href="{{ product.url }}"
+                      class="collection-filter-products__button button button--primary"
+                      aria-label="Buy {{ product.title | escape }}"
+                    >
+                      {{ section.settings.button_label | escape }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p class="collection-filter-products__empty">
+        Add collection blocks to show products in this section.
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection filter grid",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 6,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "Shop by collection",
+      "label": "Section title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "default": "<p>Filter products by collection and highlight your best-selling categories with a quick interactive switcher.</p>",
+      "label": "Section description"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "default": "All",
+      "label": "All filter label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Buy now",
+      "label": "Button label"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8,
+      "label": "Products per collection"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter",
+      "name": "Collection filter",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Filter label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection filter grid",
+      "blocks": [
+        {
+          "type": "filter"
+        },
+        {
+          "type": "filter"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

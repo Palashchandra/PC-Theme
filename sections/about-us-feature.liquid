@@ -1,0 +1,204 @@
+{{ 'section-about-us-feature.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="about-us-feature__section color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <div class="about-us-feature__inner">
+      {%- if section.settings.section_title != blank or section.settings.section_description != blank -%}
+        <div class="about-us-feature__intro">
+          {%- if section.settings.section_label != blank -%}
+            <p class="about-us-feature__eyebrow">{{ section.settings.section_label | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.section_title != blank -%}
+            <h2 class="about-us-feature__section-title inline-richtext">{{ section.settings.section_title }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.section_description != blank -%}
+            <div class="about-us-feature__section-description rte">
+              {{ section.settings.section_description }}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="about-us-feature__content row gx-4 gy-4 gx-lg-5 align-items-center">
+        <div class="col-12 col-lg-6">
+          <div class="about-us-feature__text-card">
+            {%- if section.settings.content_title != blank -%}
+              <h2 class="about-us-feature__content-title inline-richtext">{{ section.settings.content_title }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.content_description != blank -%}
+              <div class="about-us-feature__content-description rte">
+                {{ section.settings.content_description }}
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.button_label != blank -%}
+              <a
+                {% if section.settings.button_link == blank %}
+                  role="link" aria-disabled="true"
+                {% else %}
+                  href="{{ section.settings.button_link }}"
+                {% endif %}
+                class="about-us-feature__button button button--primary"
+              >
+                {{ section.settings.button_label | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <div class="about-us-feature__media-card global-media-settings">
+            {%- if section.settings.image != blank -%}
+              {%- assign image_height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio -%}
+              {{
+                section.settings.image
+                | image_url: width: 1600
+                | image_tag:
+                  class: 'about-us-feature__image',
+                  loading: 'lazy',
+                  widths: '375, 550, 750, 900, 1100, 1500, 1600',
+                  sizes: '(min-width: 990px) 40vw, 100vw',
+                  width: section.settings.image.width,
+                  height: image_height
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'about-us-feature__placeholder placeholder-svg' }}
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About us feature",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "text",
+      "id": "section_label",
+      "default": "About us",
+      "label": "Section label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "section_title",
+      "default": "Built with care, designed for everyday life.",
+      "label": "Section title"
+    },
+    {
+      "type": "richtext",
+      "id": "section_description",
+      "default": "<p>Use this section to introduce your brand story, your values, and what makes your business different.</p>",
+      "label": "Section description"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "content_title",
+      "default": "We create thoughtful products that blend quality, comfort, and purpose.",
+      "label": "Column title"
+    },
+    {
+      "type": "richtext",
+      "id": "content_description",
+      "default": "<p>Share a stronger brand statement here. Talk about your mission, how your products are made, or why customers keep coming back to your store.</p>",
+      "label": "Column description"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "About us",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "About us feature"
+    }
+  ]
+}
+{% endschema %}

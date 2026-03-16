@@ -1,0 +1,285 @@
+{{ 'section-split-hero-banner.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #SplitHeroBanner-{{ section.id }} {
+    --split-hero-padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    --split-hero-padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    #SplitHeroBanner-{{ section.id }} {
+      --split-hero-padding-top: {{ section.settings.padding_top }}px;
+      --split-hero-padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign show_ticker = false
+  if section.settings.ticker_label != blank
+    assign show_ticker = true
+  elsif section.settings.ticker_text_1 != blank
+    assign show_ticker = true
+  elsif section.settings.ticker_text_2 != blank
+    assign show_ticker = true
+  elsif section.settings.ticker_text_3 != blank
+    assign show_ticker = true
+  endif
+
+  capture ticker_items
+    if section.settings.ticker_text_1 != blank
+      echo '<span class="split-hero-banner__ticker-item">'
+      echo section.settings.ticker_text_1 | escape
+      echo '</span>'
+    endif
+    if section.settings.ticker_text_2 != blank
+      echo '<span class="split-hero-banner__ticker-item">'
+      echo section.settings.ticker_text_2 | escape
+      echo '</span>'
+    endif
+    if section.settings.ticker_text_3 != blank
+      echo '<span class="split-hero-banner__ticker-item">'
+      echo section.settings.ticker_text_3 | escape
+      echo '</span>'
+    endif
+  endcapture
+-%}
+
+<section
+  id="SplitHeroBanner-{{ section.id }}"
+  class="split-hero-banner color-{{ section.settings.color_scheme }} gradient"
+>
+  <div class="page-width">
+    <div class="split-hero-banner__inner row align-items-center">
+      <div class="col-12 col-lg-6">
+        <div class="split-hero-banner__content">
+          {%- if section.settings.subtitle != blank -%}
+            <p class="split-hero-banner__subtitle">{{ section.settings.subtitle | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h1 class="split-hero-banner__title inline-richtext">{{ section.settings.title }}</h1>
+          {%- endif -%}
+
+          {%- if section.settings.description != blank -%}
+            <div class="split-hero-banner__description rte">
+              {{ section.settings.description }}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.primary_button_label != blank or section.settings.secondary_button_label != blank -%}
+            <div class="split-hero-banner__buttons">
+              {%- if section.settings.primary_button_label != blank -%}
+                <a
+                  {% if section.settings.primary_button_link == blank %}
+                    role="link" aria-disabled="true"
+                  {% else %}
+                    href="{{ section.settings.primary_button_link }}"
+                  {% endif %}
+                  class="button button--primary"
+                >
+                  {{ section.settings.primary_button_label | escape }}
+                </a>
+              {%- endif -%}
+
+              {%- if section.settings.secondary_button_label != blank -%}
+                <a
+                  {% if section.settings.secondary_button_link == blank %}
+                    role="link" aria-disabled="true"
+                  {% else %}
+                    href="{{ section.settings.secondary_button_link }}"
+                  {% endif %}
+                  class="button button--secondary"
+                >
+                  {{ section.settings.secondary_button_label | escape }}
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="split-hero-banner__media">
+          <div class="split-hero-banner__image-shell">
+            {%- if section.settings.image != blank -%}
+              {%- assign image_height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio -%}
+              {{
+                section.settings.image
+                | image_url: width: 1800
+                | image_tag:
+                  class: 'split-hero-banner__image',
+                  loading: 'eager',
+                  fetchpriority: 'high',
+                  widths: '550, 750, 990, 1200, 1500, 1800',
+                  sizes: '(min-width: 990px) 42vw, 100vw',
+                  width: section.settings.image.width,
+                  height: image_height
+              }}
+            {%- else -%}
+              {{ 'lifestyle-2' | placeholder_svg_tag: 'split-hero-banner__placeholder placeholder-svg' }}
+            {%- endif -%}
+
+            {%- if show_ticker and ticker_items != blank -%}
+              <div class="split-hero-banner__ticker">
+                {%- if section.settings.ticker_label != blank -%}
+                  <span class="split-hero-banner__ticker-label">
+                    <i class="fa-solid fa-fire-flame-curved" aria-hidden="true"></i>
+                    {{ section.settings.ticker_label | escape }}
+                  </span>
+                {%- endif -%}
+
+                <div class="split-hero-banner__ticker-marquee" aria-hidden="true">
+                  <div class="split-hero-banner__ticker-track">
+                    {%- for i in (1..6) -%}
+                      {{ ticker_items }}
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Split hero banner",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "default": "Top-rated arrival",
+      "label": "Sub title"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "Refresh your storefront with a bold split-screen hero.",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "default": "<p>Showcase your collection with a strong headline, a clear value proposition, and a visual that feels instantly shoppable.</p>",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_label",
+      "default": "Shop now",
+      "label": "Primary button label"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "default": "Learn more",
+      "label": "Secondary button label"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Right column image"
+    },
+    {
+      "type": "text",
+      "id": "ticker_label",
+      "default": "Top seller",
+      "label": "Ticker label"
+    },
+    {
+      "type": "text",
+      "id": "ticker_text_1",
+      "default": "Best seller this week",
+      "label": "Ticker text 1"
+    },
+    {
+      "type": "text",
+      "id": "ticker_text_2",
+      "default": "4.9 average rating",
+      "label": "Ticker text 2"
+    },
+    {
+      "type": "text",
+      "id": "ticker_text_3",
+      "default": "Fast shipping available",
+      "label": "Ticker text 3"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Split hero banner"
+    }
+  ]
+}
+{% endschema %}

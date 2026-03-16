@@ -1,0 +1,304 @@
+{{ 'section-image-faq-accordion.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #ImageFaqAccordion-{{ section.id }} {
+    --image-faq-radius: {{ section.settings.corner_radius }}px;
+    --image-faq-radius-current: {{ section.settings.corner_radius }}px;
+    --image-faq-overlay-opacity: {{ section.settings.background_overlay_opacity | divided_by: 100.0 }};
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #ImageFaqAccordion-{{ section.id }} {
+      --image-faq-radius-current: calc(var(--image-faq-radius) * 0.6);
+    }
+  }
+{%- endstyle -%}
+
+<section
+  id="ImageFaqAccordion-{{ section.id }}"
+  class="image-faq-accordion color-{{ section.settings.color_scheme }} gradient"
+>
+  {%- if section.settings.background_style == 'image' and section.settings.background_image != blank -%}
+    <div class="image-faq-accordion__background media">
+      {{
+        section.settings.background_image
+        | image_url: width: 2400
+        | image_tag:
+          loading: 'lazy',
+          widths: '750, 1100, 1500, 2000, 2400',
+          sizes: '100vw',
+          width: section.settings.background_image.width,
+          height: section.settings.background_image.height
+      }}
+    </div>
+    <div class="image-faq-accordion__overlay"></div>
+  {%- endif -%}
+
+  <div class="page-width section-{{ section.id }}-padding image-faq-accordion__inner">
+    <div class="image-faq-accordion__grid row align-items-center">
+      <div class="image-faq-accordion__media-column col-12 col-lg-6">
+        <div class="image-faq-accordion__media-card global-media-settings">
+          {%- if section.settings.image != blank -%}
+            {%- assign image_height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio -%}
+            {{
+              section.settings.image
+              | image_url: width: 1600
+              | image_tag:
+                class: 'image-faq-accordion__image',
+                loading: 'lazy',
+                widths: '375, 550, 750, 900, 1200, 1500, 1600',
+                sizes: '(min-width: 990px) 42vw, 100vw',
+                width: section.settings.image.width,
+                height: image_height
+            }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'image-faq-accordion__placeholder placeholder-svg' }}
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="image-faq-accordion__content-column col-12 col-lg-6">
+        <div class="image-faq-accordion__content-card">
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="image-faq-accordion__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.heading != blank -%}
+            <h2 class="image-faq-accordion__title inline-richtext">{{ section.settings.heading }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.description != blank -%}
+            <div class="image-faq-accordion__description rte">
+              {{ section.settings.description }}
+            </div>
+          {%- endif -%}
+
+          <div class="image-faq-accordion__items">
+            {%- for block in section.blocks -%}
+              <div class="image-faq-accordion__item" {{ block.shopify_attributes }}>
+                <details
+                  id="Details-{{ block.id }}-{{ section.id }}"
+                  {% if section.settings.open_first_item and forloop.first %}
+                    open
+                  {% endif %}
+                >
+                  <summary id="Summary-{{ block.id }}-{{ section.id }}">
+                    <h5 class="image-faq-accordion__question">{{ block.settings.question | escape }}</h5>
+                    <span class="image-faq-accordion__caret">
+                      {% render 'icon-caret' %}
+                    </span>
+                  </summary>
+                  <div
+                    class="image-faq-accordion__answer rte"
+                    id="Content-{{ block.id }}-{{ section.id }}"
+                    role="region"
+                    aria-labelledby="Summary-{{ block.id }}-{{ section.id }}"
+                  >
+                    {{ block.settings.answer }}
+                  </div>
+                </details>
+              </div>
+            {%- else -%}
+              <div class="image-faq-accordion__item">
+                <details open>
+                  <summary>
+                    <h3 class="image-faq-accordion__question">Frequently asked question</h3>
+                    <span class="image-faq-accordion__caret">
+                      {% render 'icon-caret' %}
+                    </span>
+                  </summary>
+                  <div class="image-faq-accordion__answer rte">
+                    <p>Add FAQ blocks in the theme editor to populate this section.</p>
+                  </div>
+                </details>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image FAQ accordion",
+  "class": "section",
+  "max_blocks": 8,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "select",
+      "id": "background_style",
+      "options": [
+        {
+          "value": "color",
+          "label": "Background color"
+        },
+        {
+          "value": "image",
+          "label": "Background image"
+        }
+      ],
+      "default": "color",
+      "label": "Background style"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "background_overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Background overlay opacity",
+      "default": 45
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Left column image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "default": "FAQ",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Answers to the questions your customers ask most.",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "default": "<p>Use this space to share helpful details about shipping, returns, sizing, or anything else your customers should know before they buy.</p>",
+      "label": "Description"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_item",
+      "default": true,
+      "label": "Open first FAQ item"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "default": "How long does shipping take?",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "default": "<p>Share your shipping timelines here so customers know what to expect after placing an order.</p>",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image FAQ accordion",
+      "blocks": [
+        {
+          "type": "faq_item"
+        },
+        {
+          "type": "faq_item"
+        },
+        {
+          "type": "faq_item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
