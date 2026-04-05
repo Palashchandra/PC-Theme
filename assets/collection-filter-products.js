@@ -12,36 +12,13 @@
       this.items = Array.from(section.querySelectorAll('[data-collection-filter-item]'));
       this.quickAddButtons = Array.from(section.querySelectorAll('[data-collection-filter-add]'));
       this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
-      this.isotope = null;
     }
 
     init() {
       if (!this.grid || !this.items.length) return;
       this.bindButtons();
       this.bindQuickAddButtons();
-      this.waitForLibrary();
-    }
-
-    waitForLibrary(attempt = 0) {
-      if (window.Isotope) {
-        this.isotope = new window.Isotope(this.grid, {
-          itemSelector: '[data-collection-filter-item]',
-          layoutMode: 'fitRows',
-          percentPosition: true,
-          transitionDuration: '0.35s'
-        });
-
-        this.observeImages();
-        this.applyFilter(this.buttons.find((button) => button.classList.contains('is-active')) || this.buttons[0]);
-        return;
-      }
-
-      if (attempt >= 20) {
-        this.applyFilter(this.buttons.find((button) => button.classList.contains('is-active')) || this.buttons[0], true);
-        return;
-      }
-
-      window.setTimeout(() => this.waitForLibrary(attempt + 1), 200);
+      this.applyFilter(this.buttons.find((button) => button.classList.contains('is-active')) || this.buttons[0]);
     }
 
     bindButtons() {
@@ -129,7 +106,7 @@
       }
     }
 
-    applyFilter(button, fallbackOnly = false) {
+    applyFilter(button) {
       if (!button) return;
 
       const filterValue = button.dataset.filter || '*';
@@ -140,29 +117,13 @@
         item.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       });
 
-      if (this.isotope && !fallbackOnly) {
-        this.isotope.arrange({
-          filter: (itemElem) => filterValue === '*' || itemElem.dataset.filterGroup === filterValue
-        });
-        return;
-      }
-
       this.items.forEach((item) => {
         const shouldShow = filterValue === '*' || item.dataset.filterGroup === filterValue;
         item.style.display = shouldShow ? '' : 'none';
-      });
-    }
-
-    observeImages() {
-      this.section.querySelectorAll('img').forEach((image) => {
-        if (image.complete) return;
-        image.addEventListener(
-          'load',
-          () => {
-            if (this.isotope) this.isotope.layout();
-          },
-          { once: true }
-        );
+        item.style.position = '';
+        item.style.left = '';
+        item.style.top = '';
+        item.style.transform = '';
       });
     }
   }
