@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "6a3bb789-ce10-45f5-ae67-e2063ef8c76b": {
@@ -188,9 +197,30 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "split_hero_banner_c3fagh": {
+      "type": "split-hero-banner",
+      "name": "Split hero banner",
+      "settings": {
+        "color_scheme": "background-1",
+        "subtitle": "Top-rated arrival",
+        "title": "Refresh your storefront with a bold split-screen hero.",
+        "description": "<p>Showcase your collection with a strong headline, a clear value proposition, and a visual that feels instantly shoppable.</p>",
+        "primary_button_label": "Shop now",
+        "primary_button_link": "",
+        "secondary_button_label": "Learn more",
+        "secondary_button_link": "",
+        "ticker_label": "Top seller",
+        "ticker_text_1": "Best seller this week",
+        "ticker_text_2": "4.9 average rating",
+        "ticker_text_3": "Fast shipping available",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
     }
   },
   "order": [
+    "split_hero_banner_c3fagh",
     "6a3bb789-ce10-45f5-ae67-e2063ef8c76b",
     "featured_collection",
     "collection_filter_products_home",
