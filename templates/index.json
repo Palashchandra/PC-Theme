@@ -29,6 +29,22 @@
         "padding_bottom": 40
       }
     },
+    "about_us_feature_QCMMJT": {
+      "type": "about-us-feature",
+      "name": "About us feature",
+      "settings": {
+        "color_scheme": "background-1",
+        "section_label": "About us",
+        "section_title": "Built with care, designed for everyday life.",
+        "section_description": "<p>Use this section to introduce your brand story, your values, and what makes your business different.</p>",
+        "content_title": "We create thoughtful products that blend quality, comfort, and purpose.",
+        "content_description": "<p>Share a stronger brand statement here. Talk about your mission, how your products are made, or why customers keep coming back to your store.</p>",
+        "button_label": "About us",
+        "button_link": "",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
     "collection_filter_products_home": {
       "type": "collection-filter-products",
       "blocks": {
@@ -67,6 +83,7 @@
   },
   "order": [
     "split_hero_banner_c3fagh",
+    "about_us_feature_QCMMJT",
     "collection_filter_products_home"
   ]
 }
