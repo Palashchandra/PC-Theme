@@ -1,0 +1,286 @@
+{{ 'section-testimonials-showcase.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'testimonials-showcase.js' | asset_url }}" defer="defer"></script>
+
+<section
+  id="TestimonialsShowcase-{{ section.id }}"
+  class="testimonials-showcase color-{{ section.settings.color_scheme }} gradient"
+  data-testimonials-showcase
+  style="
+    --testimonials-padding-top-mobile: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    --testimonials-padding-bottom-mobile: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    --testimonials-padding-top-desktop: {{ section.settings.padding_top }}px;
+    --testimonials-padding-bottom-desktop: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="page-width">
+    <div class="testimonials-showcase-shell">
+      <div class="row testimonials-showcase-head align-items-end gy-4">
+        <div class="col-12 col-lg-7">
+          <div class="testimonials-showcase-copy">
+            {%- if section.settings.eyebrow != blank -%}
+              <p class="testimonials-showcase-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <h2 class="testimonials-showcase-title inline-richtext">{{ section.settings.title }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.description != blank -%}
+              <div class="testimonials-showcase-description rte">
+                {{ section.settings.description }}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <div class="testimonials-showcase-nav" data-testimonials-nav>
+            <button
+              type="button"
+              class="testimonials-showcase-nav-button testimonials-showcase-nav-button-prev"
+              data-testimonials-prev
+              aria-label="Previous testimonial"
+            >
+              <span class="testimonials-showcase-nav-icon">
+                {% render 'icon-caret' %}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="testimonials-showcase-nav-button testimonials-showcase-nav-button-next"
+              data-testimonials-next
+              aria-label="Next testimonial"
+            >
+              <span class="testimonials-showcase-nav-icon">
+                {% render 'icon-caret' %}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div
+            class="testimonials-showcase-slider swiper"
+            data-testimonials-slider
+            data-desktop-slides="{{ section.settings.columns_desktop }}"
+          >
+            <div class="swiper-wrapper">
+              {%- for block in section.blocks -%}
+                <div class="swiper-slide" {{ block.shopify_attributes }}>
+                  <article class="testimonials-showcase-card">
+                    <div
+                      class="testimonials-showcase-rating"
+                      role="img"
+                      aria-label="{{ block.settings.rating }} out of 5 stars"
+                    >
+                      {%- for index in (1..5) -%}
+                        <span
+                          class="testimonials-showcase-star{% if index <= block.settings.rating %} is-filled{% endif %}"
+                          aria-hidden="true"
+                        >
+                          &#9733;
+                        </span>
+                      {%- endfor -%}
+                    </div>
+
+                    <div class="testimonials-showcase-quote rte">
+                      {{ block.settings.quote }}
+                    </div>
+
+                    <div class="testimonials-showcase-client">
+                      <div class="testimonials-showcase-avatar">
+                        {%- if block.settings.client_image != blank -%}
+                          {%- assign avatar_height = block.settings.client_image.width | divided_by: block.settings.client_image.aspect_ratio -%}
+                          {{
+                            block.settings.client_image
+                            | image_url: width: 120
+                            | image_tag:
+                              class: 'testimonials-showcase-avatar-image',
+                              loading: 'lazy',
+                              widths: '60, 80, 120',
+                              sizes: '60px',
+                              width: block.settings.client_image.width,
+                              height: avatar_height,
+                              alt: block.settings.client_name | escape
+                          }}
+                        {%- else -%}
+                          <span class="testimonials-showcase-avatar-fallback">
+                            {{ block.settings.client_name | strip | slice: 0 | upcase | default: 'C' }}
+                          </span>
+                        {%- endif -%}
+                      </div>
+
+                      <div class="testimonials-showcase-client-meta">
+                        {%- if block.settings.client_name != blank -%}
+                          <h3 class="testimonials-showcase-client-name">{{ block.settings.client_name | escape }}</h3>
+                        {%- endif -%}
+
+                        {%- if block.settings.client_role != blank -%}
+                          <p class="testimonials-showcase-client-role">{{ block.settings.client_role | escape }}</p>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              {%- endfor -%}
+            </div>
+
+            <div class="testimonials-showcase-dots" data-testimonials-pagination></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials showcase",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 8,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "default": "Testimonials",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "What customers are saying",
+      "label": "Section title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "default": "<p>Use this section to share feedback from customers and build trust with a polished testimonial slider.</p>",
+      "label": "Section description"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Desktop slides"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        },
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse"
+        }
+      ],
+      "default": "background-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5,
+          "label": "Rating"
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "default": "<p>\"Beautiful quality, fast delivery, and a product that feels even better in person.\"</p>",
+          "label": "Content"
+        },
+        {
+          "type": "image_picker",
+          "id": "client_image",
+          "label": "Client image"
+        },
+        {
+          "type": "text",
+          "id": "client_name",
+          "default": "Olivia Parker",
+          "label": "Client name"
+        },
+        {
+          "type": "text",
+          "id": "client_role",
+          "default": "Verified customer",
+          "label": "Client role"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials showcase",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

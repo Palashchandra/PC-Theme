@@ -394,6 +394,40 @@
             {%- endif -%}
           </div>
 
+          <div class="cart-drawer-discount" data-cart-discount>
+            <div class="cart-drawer-discount-copy">
+              <p class="cart-drawer-discount-title">Discount code</p>
+              <p class="cart-drawer-discount-caption">Add your coupon here before checkout.</p>
+            </div>
+
+            <form class="cart-drawer-discount-form" data-cart-discount-form novalidate>
+              <div class="field cart-drawer-discount-field">
+                <input
+                  id="CartDrawer-DiscountCode"
+                  class="field__input"
+                  type="text"
+                  name="discount_code"
+                  placeholder="Discount code"
+                  autocomplete="off"
+                  data-cart-discount-input
+                >
+                <label class="field__label" for="CartDrawer-DiscountCode">Discount code</label>
+              </div>
+
+              <button type="submit" class="button button--secondary cart-drawer-discount-button">
+                Apply
+              </button>
+            </form>
+
+            <small
+              class="cart-drawer-discount-message"
+              data-cart-discount-message
+              role="status"
+              aria-live="polite"
+              hidden
+            ></small>
+          </div>
+
           <small class="tax-note caption-large rte">
             {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
               {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
