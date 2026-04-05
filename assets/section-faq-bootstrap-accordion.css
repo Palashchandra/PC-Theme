@@ -1,0 +1,155 @@
+.faq-bootstrap-accordion {
+  position: relative;
+  padding-top: var(--faq-padding-top-mobile, 4.8rem);
+  padding-bottom: var(--faq-padding-bottom-mobile, 4.8rem);
+  overflow: hidden;
+}
+
+.faq-bootstrap-accordion-inner {
+  max-width: 88rem;
+  margin: 0 auto;
+}
+
+.faq-bootstrap-accordion-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.faq-bootstrap-accordion-title {
+  margin: 0;
+  color: rgb(var(--color-foreground));
+  line-height: 1.02;
+  letter-spacing: -0.16rem;
+}
+
+.faq-bootstrap-accordion-description {
+  margin-top: 1.8rem;
+  color: rgba(var(--color-foreground), 0.72);
+  line-height: 1.8;
+}
+
+.faq-bootstrap-accordion-description p,
+.faq-bootstrap-accordion-body p:first-child {
+  margin-top: 0;
+}
+
+.faq-bootstrap-accordion-description p:last-child,
+.faq-bootstrap-accordion-body p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-bootstrap-accordion-list {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.faq-bootstrap-accordion-item {
+  overflow: hidden;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  border-radius: 2.4rem !important;
+  background:
+    linear-gradient(160deg, rgba(var(--color-foreground), 0.08), rgba(var(--color-foreground), 0.02)),
+    rgba(var(--color-background), 0.88);
+  box-shadow: 0 1.8rem 4rem rgba(var(--color-foreground), 0.06);
+}
+
+.faq-bootstrap-accordion-heading {
+  margin: 0;
+}
+
+.faq-bootstrap-accordion-button {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 2rem 2.2rem;
+  color: rgb(var(--color-foreground));
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.faq-bootstrap-accordion-button,
+.faq-bootstrap-accordion-button:not(.collapsed),
+.faq-bootstrap-accordion-button:focus {
+  color: rgb(var(--color-foreground));
+  background: transparent;
+}
+
+.faq-bootstrap-accordion-button::after {
+  display: none;
+}
+
+.faq-bootstrap-accordion-button:focus {
+  border-color: transparent;
+}
+
+.faq-bootstrap-accordion-button-text {
+  flex: 1 1 auto;
+  font-size: 1.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.faq-bootstrap-accordion-button-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 999px;
+  background: rgba(var(--color-foreground), 0.08);
+  transition: transform var(--duration-default) ease, background-color var(--duration-default) ease;
+}
+
+.faq-bootstrap-accordion-button-icon .icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.faq-bootstrap-accordion-button:not(.collapsed) .faq-bootstrap-accordion-button-icon {
+  transform: rotate(180deg);
+  background: rgba(var(--color-foreground), 0.14);
+}
+
+.faq-bootstrap-accordion-body {
+  padding: 0 2.2rem 2rem;
+  color: rgba(var(--color-foreground), 0.74);
+  line-height: 1.8;
+}
+
+@media screen and (min-width: 750px) {
+  .faq-bootstrap-accordion {
+    padding-top: var(--faq-padding-top-desktop, 6rem);
+    padding-bottom: var(--faq-padding-bottom-desktop, 6rem);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .faq-bootstrap-accordion-header {
+    text-align: left;
+    margin-bottom: 2.4rem;
+  }
+
+  .faq-bootstrap-accordion-item {
+    border-radius: 2rem !important;
+  }
+
+  .faq-bootstrap-accordion-button {
+    padding: 1.7rem 1.8rem;
+    gap: 1.2rem;
+  }
+
+  .faq-bootstrap-accordion-button-text {
+    font-size: 1.65rem;
+  }
+
+  .faq-bootstrap-accordion-button-icon {
+    width: 3.4rem;
+    height: 3.4rem;
+  }
+
+  .faq-bootstrap-accordion-body {
+    padding: 0 1.8rem 1.8rem;
+  }
+}
