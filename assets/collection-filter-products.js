@@ -9,20 +9,23 @@
       this.section = section;
       this.grid = section.querySelector('[data-collection-filter-grid]');
       this.buttons = Array.from(section.querySelectorAll('[data-collection-filter-button]'));
-      this.items = Array.from(section.querySelectorAll('.collection-filter-products__item'));
+      this.items = Array.from(section.querySelectorAll('[data-collection-filter-item]'));
+      this.quickAddButtons = Array.from(section.querySelectorAll('[data-collection-filter-add]'));
+      this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
       this.isotope = null;
     }
 
     init() {
       if (!this.grid || !this.items.length) return;
       this.bindButtons();
+      this.bindQuickAddButtons();
       this.waitForLibrary();
     }
 
     waitForLibrary(attempt = 0) {
       if (window.Isotope) {
         this.isotope = new window.Isotope(this.grid, {
-          itemSelector: '.collection-filter-products__item',
+          itemSelector: '[data-collection-filter-item]',
           layoutMode: 'fitRows',
           percentPosition: true,
           transitionDuration: '0.35s'
@@ -47,6 +50,85 @@
       });
     }
 
+    bindQuickAddButtons() {
+      this.quickAddButtons.forEach((button) => {
+        button.addEventListener('click', () => this.addToCart(button));
+      });
+    }
+
+    addToCart(button) {
+      const variantId = button.dataset.variantId;
+      if (!variantId || button.getAttribute('aria-disabled') === 'true' || button.disabled) return;
+
+      this.setQuickAddState(button, true);
+
+      const requestBody = {
+        items: [
+          {
+            id: Number(variantId),
+            quantity: 1
+          }
+        ]
+      };
+
+      if (this.cart) {
+        requestBody.sections = this.cart.getSectionsToRender().map((section) => section.id);
+        requestBody.sections_url = window.location.pathname;
+        this.cart.setActiveElement(button);
+      }
+
+      const config = fetchConfig('json');
+      config.headers['X-Requested-With'] = 'XMLHttpRequest';
+      config.body = JSON.stringify(requestBody);
+
+      fetch(`${routes.cart_add_url}`, config)
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.status) {
+            publish(PUB_SUB_EVENTS.cartError, {
+              source: 'collection-filter-products',
+              productVariantId: variantId,
+              errors: response.description,
+              message: response.message
+            });
+            throw new Error(response.description || response.message || window.cartStrings.error);
+          }
+
+          publish(PUB_SUB_EVENTS.cartUpdate, {
+            source: 'collection-filter-products',
+            productVariantId: variantId
+          });
+
+          if (!this.cart) {
+            window.location = window.routes.cart_url;
+            return;
+          }
+
+          this.cart.renderContents(response);
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          if (this.cart && this.cart.classList.contains('is-empty')) {
+            this.cart.classList.remove('is-empty');
+          }
+
+          this.setQuickAddState(button, false);
+        });
+    }
+
+    setQuickAddState(button, isLoading) {
+      button.classList.toggle('loading', isLoading);
+      button.toggleAttribute('aria-disabled', isLoading);
+      button.disabled = isLoading;
+
+      const spinner = button.querySelector('.loading-overlay__spinner');
+      if (spinner) {
+        spinner.classList.toggle('hidden', !isLoading);
+      }
+    }
+
     applyFilter(button, fallbackOnly = false) {
       if (!button) return;
 
@@ -59,12 +141,14 @@
       });
 
       if (this.isotope && !fallbackOnly) {
-        this.isotope.arrange({ filter: filterValue });
+        this.isotope.arrange({
+          filter: (itemElem) => filterValue === '*' || itemElem.dataset.filterGroup === filterValue
+        });
         return;
       }
 
       this.items.forEach((item) => {
-        const shouldShow = filterValue === '*' || item.matches(filterValue);
+        const shouldShow = filterValue === '*' || item.dataset.filterGroup === filterValue;
         item.style.display = shouldShow ? '' : 'none';
       });
     }

@@ -2,20 +2,6 @@
 {{ 'section-collection-filter-products.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'collection-filter-products.js' | asset_url }}" defer="defer"></script>
 
-{%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
-  }
-
-  @media screen and (min-width: 750px) {
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
-    }
-  }
-{%- endstyle -%}
-
 {%- liquid
   assign selected_collections_count = 0
   assign has_products = false
@@ -54,24 +40,24 @@
   class="collection-filter-products color-{{ section.settings.color_scheme }} gradient"
   data-collection-filter-products
 >
-  <div class="page-width section-{{ section.id }}-padding">
+  <div class="page-width">
     {%- if section.settings.title != blank or section.settings.description != blank or selected_collections_count > 0 -%}
-      <div class="collection-filter-products__header">
+      <div class="collection-filter-products-header">
         {%- if section.settings.title != blank -%}
-          <h2 class="collection-filter-products__title inline-richtext">{{ section.settings.title }}</h2>
+          <h2 class="collection-filter-products-title inline-richtext">{{ section.settings.title }}</h2>
         {%- endif -%}
 
         {%- if section.settings.description != blank -%}
-          <div class="collection-filter-products__description rte">
+          <div class="collection-filter-products-description rte">
             {{ section.settings.description }}
           </div>
         {%- endif -%}
 
         {%- if selected_collections_count > 0 -%}
-          <div class="collection-filter-products__filters" role="toolbar" aria-label="Collection filters">
+          <div class="collection-filter-products-filters" role="toolbar" aria-label="Collection filters">
             <button
               type="button"
-              class="collection-filter-products__filter is-active"
+              class="collection-filter-products-filter is-active"
               data-collection-filter-button
               data-filter="*"
               aria-pressed="true"
@@ -83,9 +69,9 @@
               {%- if block.settings.collection != blank -%}
                 <button
                   type="button"
-                  class="collection-filter-products__filter"
+                  class="collection-filter-products-filter"
                   data-collection-filter-button
-                  data-filter=".filter-{{ block.id }}"
+                  data-filter="{{ block.id }}"
                   aria-pressed="false"
                   {{ block.shopify_attributes }}
                 >
@@ -103,62 +89,102 @@
     {%- endif -%}
 
     {%- if has_products -%}
-      <div class="collection-filter-products__grid row" data-collection-filter-grid>
-        {%- for block in section.blocks -%}
-          {%- assign selected_collection = block.settings.collection -%}
-          {%- if selected_collection != blank -%}
-            {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
-              <div
-                class="collection-filter-products__item {{ product_column_classes }} filter-{{ block.id }}"
-                data-product-handle="{{ product.handle }}"
-              >
-                <div class="collection-filter-products__card">
-                  <a href="{{ product.url }}" class="collection-filter-products__image-link">
-                    <div class="collection-filter-products__image-wrapper global-media-settings">
-                      {%- if product.featured_media != blank -%}
-                        {{
-                          product.featured_media
-                          | image_url: width: 900
-                          | image_tag:
-                            class: 'collection-filter-products__image',
-                            loading: 'lazy',
-                            widths: '375, 550, 750, 900',
-                            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
-                            width: product.featured_media.width,
-                            height: product.featured_media.height,
-                            alt: product.featured_media.alt | default: product.title | escape
-                        }}
-                      {%- else -%}
-                        {{ 'product-1' | placeholder_svg_tag: 'collection-filter-products__placeholder placeholder-svg' }}
+      <div class="row">
+        <div class="collection-filter-products-grid" data-collection-filter-grid>
+          {%- for block in section.blocks -%}
+            {%- assign selected_collection = block.settings.collection -%}
+            {%- if selected_collection != blank -%}
+              {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
+                {%- assign quick_add_variant = product.selected_or_first_available_variant -%}
+                <div
+                  class="{{ product_column_classes }}"
+                  data-collection-filter-item
+                  data-filter-group="{{ block.id }}"
+                  data-product-handle="{{ product.handle }}"
+                >
+                  <div class="collection-filter-products-card">
+                    <div class="collection-filter-products-image-wrap global-media-settings">
+                      <a href="{{ product.url }}" class="collection-filter-products-image-link">
+                        {%- if product.featured_media != blank -%}
+                          {{
+                            product.featured_media
+                            | image_url: width: 900
+                            | image_tag:
+                              class: 'collection-filter-products-image',
+                              loading: 'lazy',
+                              widths: '375, 550, 750, 900',
+                              sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                              width: product.featured_media.width,
+                              height: product.featured_media.height,
+                              alt: product.featured_media.alt | default: product.title | escape
+                          }}
+                        {%- else -%}
+                          {{ 'product-1' | placeholder_svg_tag: 'collection-filter-products-placeholder placeholder-svg' }}
+                        {%- endif -%}
+                      </a>
+
+                      {%- if quick_add_variant != blank -%}
+                        <div class="collection-filter-products-quick-add no-js-hidden">
+                          <button
+                            type="button"
+                            class="collection-filter-products-quick-add-button"
+                            data-collection-filter-add
+                            data-variant-id="{{ quick_add_variant.id }}"
+                            aria-label="{% if quick_add_variant.available %}{{ 'products.product.add_to_cart' | t }}: {{ product.title | escape }}{% else %}{{ 'products.product.sold_out' | t }}: {{ product.title | escape }}{% endif %}"
+                            {% if quick_add_variant.available == false %}
+                              disabled
+                            {% endif %}
+                          >
+                            <span class="visually-hidden">
+                              {%- if quick_add_variant.available -%}
+                                {{ 'products.product.add_to_cart' | t }}
+                              {%- else -%}
+                                {{ 'products.product.sold_out' | t }}
+                              {%- endif -%}
+                            </span>
+                            {% render 'icon-cart' %}
+                            <div class="loading-overlay__spinner hidden">
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                class="spinner"
+                                viewBox="0 0 66 66"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                              </svg>
+                            </div>
+                          </button>
+                        </div>
                       {%- endif -%}
                     </div>
-                  </a>
 
-                  <div class="collection-filter-products__content">
-                    <h4 class="collection-filter-products__card-title">
-                      <a href="{{ product.url }}">{{ product.title | escape }}</a>
-                    </h4>
+                    <div class="collection-filter-products-content">
+                      <h4 class="collection-filter-products-card-title">
+                        <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                      </h4>
 
-                    <div class="collection-filter-products__price">
-                      {% render 'price', product: product, price_class: '' %}
+                      <div class="collection-filter-products-price">
+                        {% render 'price', product: product, price_class: '' %}
+                      </div>
+
+                      <a
+                        href="{{ product.url }}"
+                        class="collection-filter-products-button button button--primary"
+                        aria-label="Buy {{ product.title | escape }}"
+                      >
+                        {{ section.settings.button_label | escape }}
+                      </a>
                     </div>
-
-                    <a
-                      href="{{ product.url }}"
-                      class="collection-filter-products__button button button--primary"
-                      aria-label="Buy {{ product.title | escape }}"
-                    >
-                      {{ section.settings.button_label | escape }}
-                    </a>
                   </div>
                 </div>
-              </div>
-            {%- endfor -%}
-          {%- endif -%}
-        {%- endfor -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
       </div>
     {%- else -%}
-      <p class="collection-filter-products__empty">
+      <p class="collection-filter-products-empty">
         Add collection blocks to show products in this section.
       </p>
     {%- endif -%}
@@ -262,28 +288,8 @@
       "label": "Color scheme"
     },
     {
-      "type": "header",
-      "content": "Section spacing"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom",
-      "default": 60
+      "type": "paragraph",
+      "content": "Spacing is controlled directly in the section CSS."
     }
   ],
   "blocks": [
