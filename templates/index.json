@@ -44,10 +44,47 @@
         "padding_top": 60,
         "padding_bottom": 60
       }
+    },
+    "collection_filter_products_fNJeUn": {
+      "type": "collection-filter-products",
+      "blocks": {
+        "filter_wUBVBz": {
+          "type": "filter",
+          "settings": {
+            "collection": "automated-collection",
+            "label": ""
+          }
+        },
+        "filter_rr3Vzz": {
+          "type": "filter",
+          "settings": {
+            "collection": "hydrogen",
+            "label": ""
+          }
+        }
+      },
+      "block_order": [
+        "filter_wUBVBz",
+        "filter_rr3Vzz"
+      ],
+      "name": "Collection filter grid",
+      "settings": {
+        "title": "Shop by collection",
+        "description": "<p>Filter products by collection and highlight your best-selling categories with a quick interactive switcher.</p>",
+        "all_label": "All",
+        "button_label": "Buy now",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "background-1",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
     }
   },
   "order": [
     "split_hero_banner_c3fagh",
-    "about_us_feature_QCMMJT"
+    "about_us_feature_QCMMJT",
+    "collection_filter_products_fNJeUn"
   ]
 }
