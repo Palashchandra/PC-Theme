@@ -94,88 +94,22 @@
           {%- assign selected_collection = block.settings.collection -%}
           {%- if selected_collection != blank -%}
             {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
-              {%- assign quick_add_variant = product.selected_or_first_available_variant -%}
               <div
                 class="{{ product_column_classes }}"
                 data-collection-filter-item
                 data-filter-group="{{ block.id }}"
                 data-product-handle="{{ product.handle }}"
               >
-                <div class="collection-filter-products-card">
-                  <div class="collection-filter-products-image-wrap global-media-settings">
-                    <a href="{{ product.url }}" class="collection-filter-products-image-link">
-                      {%- if product.featured_media != blank -%}
-                        {{
-                          product.featured_media
-                          | image_url: width: 900
-                          | image_tag:
-                            class: 'collection-filter-products-image',
-                            loading: 'lazy',
-                            widths: '375, 550, 750, 900',
-                            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
-                            width: product.featured_media.width,
-                            height: product.featured_media.height,
-                            alt: product.featured_media.alt | default: product.title | escape
-                        }}
-                      {%- else -%}
-                        {{ 'product-1' | placeholder_svg_tag: 'collection-filter-products-placeholder placeholder-svg' }}
-                      {%- endif -%}
-                    </a>
-
-                    {%- if quick_add_variant != blank -%}
-                      <div class="collection-filter-products-quick-add no-js-hidden">
-                        <button
-                          type="button"
-                          class="collection-filter-products-quick-add-button"
-                          data-collection-filter-add
-                          data-variant-id="{{ quick_add_variant.id }}"
-                          aria-label="{% if quick_add_variant.available %}{{ 'products.product.add_to_cart' | t }}: {{ product.title | escape }}{% else %}{{ 'products.product.sold_out' | t }}: {{ product.title | escape }}{% endif %}"
-                          {% if quick_add_variant.available == false %}
-                            disabled
-                          {% endif %}
-                        >
-                          <span class="visually-hidden">
-                            {%- if quick_add_variant.available -%}
-                              {{ 'products.product.add_to_cart' | t }}
-                            {%- else -%}
-                              {{ 'products.product.sold_out' | t }}
-                            {%- endif -%}
-                          </span>
-                          {% render 'icon-cart' %}
-                          <div class="loading-overlay__spinner hidden">
-                            <svg
-                              aria-hidden="true"
-                              focusable="false"
-                              class="spinner"
-                              viewBox="0 0 66 66"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                            </svg>
-                          </div>
-                        </button>
-                      </div>
-                    {%- endif -%}
-                  </div>
-
-                  <div class="collection-filter-products-content">
-                    <h4 class="collection-filter-products-card-title">
-                      <a href="{{ product.url }}">{{ product.title | escape }}</a>
-                    </h4>
-
-                    <div class="collection-filter-products-price">
-                      {% render 'price', product: product, price_class: '' %}
-                    </div>
-
-                    <a
-                      href="{{ product.url }}"
-                      class="collection-filter-products-button button button--primary"
-                      aria-label="Buy {{ product.title | escape }}"
-                    >
-                      {{ section.settings.button_label | escape }}
-                    </a>
-                  </div>
-                </div>
+                {% render 'collection-product-card',
+                  product_card: product,
+                  button_label: section.settings.button_label,
+                  show_quick_add: true,
+                  lazy_load: true,
+                  image_sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                  image_widths: '375, 550, 750, 900',
+                  image_width: 900,
+                  quick_add_source: 'collection-filter-products'
+                %}
               </div>
             {%- endfor -%}
           {%- endif -%}

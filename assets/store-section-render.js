@@ -123,6 +123,10 @@ class FacetFiltersForm extends HTMLElement {
 
     if (!source || !target) return;
     target.innerHTML = source.innerHTML;
+
+    if (typeof window.initializeCollectionProductCards === 'function') {
+      window.initializeCollectionProductCards(target);
+    }
   }
 
   static renderProductCount(html) {

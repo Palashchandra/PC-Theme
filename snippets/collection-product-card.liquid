@@ -1,0 +1,105 @@
+{% comment %}
+  Shared collection product card
+
+  Accepts:
+  - product_card: {Object} Product Liquid object
+  - button_label: {String} CTA label
+  - show_quick_add: {Boolean} Show quick add button
+  - lazy_load: {Boolean} Lazy load image
+  - image_sizes: {String} Responsive sizes attribute
+  - image_widths: {String} Responsive widths attribute
+  - image_width: {Number} Image transform width
+  - quick_add_source: {String} Source name for cart events
+{% endcomment %}
+
+{%- if product_card and product_card != blank -%}
+  {%- liquid
+    assign quick_add_variant = product_card.selected_or_first_available_variant
+    assign product_button_label = button_label | default: 'Buy now'
+    assign product_image_sizes = image_sizes | default: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw'
+    assign product_image_widths = image_widths | default: '375, 550, 750, 900'
+    assign product_image_width = image_width | default: 900
+    assign quick_add_event_source = quick_add_source | default: 'collection-product-card'
+    assign image_loading = 'lazy'
+    if lazy_load == false
+      assign image_loading = 'eager'
+    endif
+  -%}
+
+  <div class="collection-filter-products-card" data-collection-product-card>
+    <div class="collection-filter-products-image-wrap global-media-settings">
+      <a href="{{ product_card.url }}" class="collection-filter-products-image-link">
+        {%- if product_card.featured_media != blank -%}
+          {{
+            product_card.featured_media
+            | image_url: width: product_image_width
+            | image_tag:
+              class: 'collection-filter-products-image',
+              loading: image_loading,
+              widths: product_image_widths,
+              sizes: product_image_sizes,
+              width: product_card.featured_media.width,
+              height: product_card.featured_media.height,
+              alt: product_card.featured_media.alt | default: product_card.title | escape
+          }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'collection-filter-products-placeholder placeholder-svg' }}
+        {%- endif -%}
+      </a>
+
+      {%- if show_quick_add and quick_add_variant != blank -%}
+        <div class="collection-filter-products-quick-add no-js-hidden">
+          <button
+            type="button"
+            class="collection-filter-products-quick-add-button"
+            data-collection-product-card-add
+            data-source="{{ quick_add_event_source }}"
+            data-variant-id="{{ quick_add_variant.id }}"
+            aria-label="{% if quick_add_variant.available %}{{ 'products.product.add_to_cart' | t }}: {{ product_card.title | escape }}{% else %}{{ 'products.product.sold_out' | t }}: {{ product_card.title | escape }}{% endif %}"
+            {% if quick_add_variant.available == false %}
+              disabled
+            {% endif %}
+          >
+            <span class="visually-hidden">
+              {%- if quick_add_variant.available -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </span>
+            {% render 'icon-cart' %}
+            <div class="loading-overlay__spinner hidden">
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                class="spinner"
+                viewBox="0 0 66 66"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+              </svg>
+            </div>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="collection-filter-products-content">
+      <h4 class="collection-filter-products-card-title">
+        <a href="{{ product_card.url }}">{{ product_card.title | escape }}</a>
+      </h4>
+
+      <div class="collection-filter-products-price">
+        {% render 'price', product: product_card, price_class: '' %}
+      </div>
+
+      <a
+        href="{{ product_card.url }}"
+        class="collection-filter-products-button button button--primary"
+        aria-label="{{ product_button_label | escape }} {{ product_card.title | escape }}"
+      >
+        {{ product_button_label | escape }}
+      </a>
+    </div>
+  </div>
+{%- endif -%}
