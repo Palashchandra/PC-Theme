@@ -320,6 +320,8 @@
                     assign normalized_max_value = ''
                     assign slider_min_value = 0
                     assign slider_max_value = normalized_range_max
+                    assign slider_min_label = 0 | money
+                    assign slider_max_label = filter.range_max | money
 
                     if filter.min_value.value
                       if uses_comma_decimals
@@ -328,6 +330,7 @@
                         assign normalized_min_value = filter.min_value.value | money_without_currency | replace: ',', ''
                       endif
                       assign slider_min_value = normalized_min_value
+                      assign slider_min_label = filter.min_value.value | money
                     endif
 
                     if filter.max_value.value
@@ -337,6 +340,7 @@
                         assign normalized_max_value = filter.max_value.value | money_without_currency | replace: ',', ''
                       endif
                       assign slider_max_value = normalized_max_value
+                      assign slider_max_label = filter.max_value.value | money
                     endif
                   %}
                   <details
@@ -374,12 +378,14 @@
                         class="facets__price"
                         data-range-max="{{ normalized_range_max }}"
                         data-range-step="0.01"
+                        data-currency-code="{{ cart.currency.iso_code }}"
+                        data-currency-symbol="{{ cart.currency.symbol }}"
                       >
                         <div class="price-range-slider no-js-hidden">
                           <div class="price-range-slider__track"></div>
                           <div class="price-range-slider__progress" data-price-slider-progress></div>
                           <input
-                            class="form-range price-range-slider__input price-range-slider__input--min"
+                            class="price-range-slider__input price-range-slider__input--min"
                             type="range"
                             min="0"
                             max="{{ normalized_range_max }}"
@@ -389,7 +395,7 @@
                             aria-label="{{ 'products.facets.from' | t }}"
                           >
                           <input
-                            class="form-range price-range-slider__input price-range-slider__input--max"
+                            class="price-range-slider__input price-range-slider__input--max"
                             type="range"
                             min="0"
                             max="{{ normalized_range_max }}"
@@ -398,19 +404,40 @@
                             data-price-slider-input="max"
                             aria-label="{{ 'products.facets.to' | t }}"
                           >
+                          <div class="price-range-slider__values">
+                            <span class="price-range-slider__value" data-price-display="min">{{ slider_min_label }}</span>
+                            <span class="price-range-slider__value" data-price-display="max">{{ slider_max_label }}</span>
+                          </div>
+
                           <div class="price-range-slider__bounds">
                             <span>{{ cart.currency.symbol }}0</span>
                             <span>{{ max_price_amount }}</span>
                           </div>
                         </div>
 
-                        <div class="price-range-values">
+                        <div class="price-range-inputs no-js-hidden">
+                          <input
+                            type="hidden"
+                            data-price-input="min"
+                            name="{{ filter.min_value.param_name }}"
+                            value="{{ normalized_min_value }}"
+                            disabled
+                          >
+                          <input
+                            type="hidden"
+                            data-price-input="max"
+                            name="{{ filter.max_value.param_name }}"
+                            value="{{ normalized_max_value }}"
+                            disabled
+                          >
+                        </div>
+
+                        <div class="price-range-values no-js">
                           <div class="price-range-field">
                             <span class="field-currency">{{ cart.currency.symbol }}</span>
                             <div class="field">
                               <input
                                 class="field__input"
-                                data-price-input="min"
                                 name="{{ filter.min_value.param_name }}"
                                 id="Filter-{{ filter.label | escape }}-GTE"
                                 value="{{ normalized_min_value }}"
@@ -432,7 +459,6 @@
                             <div class="field">
                               <input
                                 class="field__input"
-                                data-price-input="max"
                                 name="{{ filter.max_value.param_name }}"
                                 id="Filter-{{ filter.label | escape }}-LTE"
                                 value="{{ normalized_max_value }}"
@@ -818,6 +844,8 @@
                         assign normalized_max_value = ''
                         assign slider_min_value = 0
                         assign slider_max_value = normalized_range_max
+                        assign slider_min_label = 0 | money
+                        assign slider_max_label = filter.range_max | money
 
                         if filter.min_value.value
                           if uses_comma_decimals
@@ -826,6 +854,7 @@
                             assign normalized_min_value = filter.min_value.value | money_without_currency | replace: ',', ''
                           endif
                           assign slider_min_value = normalized_min_value
+                          assign slider_min_label = filter.min_value.value | money
                         endif
 
                         if filter.max_value.value
@@ -835,6 +864,7 @@
                             assign normalized_max_value = filter.max_value.value | money_without_currency | replace: ',', ''
                           endif
                           assign slider_max_value = normalized_max_value
+                          assign slider_max_label = filter.max_value.value | money
                         endif
                       %}
                       <details
@@ -871,12 +901,14 @@
                             class="facets__price"
                             data-range-max="{{ normalized_range_max }}"
                             data-range-step="0.01"
+                            data-currency-code="{{ cart.currency.iso_code }}"
+                            data-currency-symbol="{{ cart.currency.symbol }}"
                           >
                             <div class="price-range-slider no-js-hidden">
                               <div class="price-range-slider__track"></div>
                               <div class="price-range-slider__progress" data-price-slider-progress></div>
                               <input
-                                class="form-range price-range-slider__input price-range-slider__input--min"
+                                class="price-range-slider__input price-range-slider__input--min"
                                 type="range"
                                 min="0"
                                 max="{{ normalized_range_max }}"
@@ -886,7 +918,7 @@
                                 aria-label="{{ 'products.facets.from' | t }}"
                               >
                               <input
-                                class="form-range price-range-slider__input price-range-slider__input--max"
+                                class="price-range-slider__input price-range-slider__input--max"
                                 type="range"
                                 min="0"
                                 max="{{ normalized_range_max }}"
@@ -895,19 +927,40 @@
                                 data-price-slider-input="max"
                                 aria-label="{{ 'products.facets.to' | t }}"
                               >
+                              <div class="price-range-slider__values">
+                                <span class="price-range-slider__value" data-price-display="min">{{ slider_min_label }}</span>
+                                <span class="price-range-slider__value" data-price-display="max">{{ slider_max_label }}</span>
+                              </div>
+
                               <div class="price-range-slider__bounds">
                                 <span>{{ cart.currency.symbol }}0</span>
                                 <span>{{ max_price_amount }}</span>
                               </div>
                             </div>
 
-                            <div class="price-range-values">
+                            <div class="price-range-inputs no-js-hidden">
+                              <input
+                                type="hidden"
+                                data-price-input="min"
+                                name="{{ filter.min_value.param_name }}"
+                                value="{{ normalized_min_value }}"
+                                disabled
+                              >
+                              <input
+                                type="hidden"
+                                data-price-input="max"
+                                name="{{ filter.max_value.param_name }}"
+                                value="{{ normalized_max_value }}"
+                                disabled
+                              >
+                            </div>
+
+                            <div class="price-range-values no-js">
                               <div class="price-range-field">
                                 <span class="field-currency">{{ cart.currency.symbol }}</span>
                                 <div class="field">
                                   <input
                                     class="field__input"
-                                    data-price-input="min"
                                     name="{{ filter.min_value.param_name }}"
                                     id="Mobile-Filter-{{ filter.label | escape }}-GTE"
                                     value="{{ normalized_min_value }}"
@@ -929,7 +982,6 @@
                                 <div class="field">
                                   <input
                                     class="field__input"
-                                    data-price-input="max"
                                     name="{{ filter.max_value.param_name }}"
                                     id="Mobile-Filter-{{ filter.label | escape }}-LTE"
                                     value="{{ normalized_max_value }}"

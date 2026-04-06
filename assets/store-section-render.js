@@ -297,12 +297,21 @@ class PriceRange extends HTMLElement {
     this.minimumBound = 0;
     this.maximumBound = this.parseValue(this.dataset.rangeMax, 0);
     this.decimals = this.getDecimalPlaces(this.dataset.rangeStep || '0.01');
+    this.currencySymbol = this.dataset.currencySymbol || '$';
 
     this.minimumInput = this.querySelector('[data-price-input="min"]');
     this.maximumInput = this.querySelector('[data-price-input="max"]');
     this.minimumSlider = this.querySelector('[data-price-slider-input="min"]');
     this.maximumSlider = this.querySelector('[data-price-slider-input="max"]');
     this.progressBar = this.querySelector('[data-price-slider-progress]');
+    this.sliderContainer = this.querySelector('.price-range-slider');
+    this.minimumDisplay = this.querySelector('[data-price-display="min"]');
+    this.maximumDisplay = this.querySelector('[data-price-display="max"]');
+    this.onWindowResize = this.updateProgress.bind(this);
+
+    [this.minimumInput, this.maximumInput].forEach((input) => {
+      if (input) input.disabled = false;
+    });
 
     [this.minimumInput, this.maximumInput].forEach((input) => {
       if (!input) return;
@@ -318,6 +327,11 @@ class PriceRange extends HTMLElement {
 
     this.syncSlidersFromInputs();
     this.updateProgress();
+    window.addEventListener('resize', this.onWindowResize);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('resize', this.onWindowResize);
   }
 
   parseValue(value, fallback) {
@@ -331,6 +345,15 @@ class PriceRange extends HTMLElement {
 
   formatValue(value) {
     return Number(Number(value).toFixed(this.decimals)).toString();
+  }
+
+  formatCurrency(value) {
+    const amount = Number(value).toLocaleString(undefined, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: this.decimals,
+    });
+
+    return `${this.currencySymbol}${amount}`;
   }
 
   getNormalizedValues(source) {
@@ -397,17 +420,46 @@ class PriceRange extends HTMLElement {
     }
   }
 
+  updateDisplays() {
+    if (!this.sliderContainer || !this.minimumDisplay || !this.maximumDisplay) return;
+
+    const minimumValue = this.parseValue(this.minimumSlider?.value, this.minimumBound);
+    const maximumValue = this.parseValue(this.maximumSlider?.value, this.maximumBound);
+    const range = this.maximumBound - this.minimumBound;
+    const sliderWidth = this.sliderContainer.clientWidth;
+    if (!sliderWidth) return;
+
+    this.minimumDisplay.textContent = this.formatCurrency(minimumValue);
+    this.maximumDisplay.textContent = this.formatCurrency(maximumValue);
+
+    [
+      { element: this.minimumDisplay, value: minimumValue },
+      { element: this.maximumDisplay, value: maximumValue },
+    ].forEach(({ element, value }) => {
+      const percent = range === 0 ? 0 : (value - this.minimumBound) / range;
+      const rawPosition = percent * sliderWidth;
+      const halfWidth = element.offsetWidth / 2;
+      const clampedPosition = Math.min(Math.max(rawPosition, halfWidth), sliderWidth - halfWidth);
+      element.style.left = `${clampedPosition}px`;
+    });
+  }
+
   updateProgress() {
-    if (!this.progressBar || !this.minimumSlider || !this.maximumSlider || this.maximumBound === this.minimumBound) return;
+    if (!this.minimumSlider || !this.maximumSlider) return;
 
     const minimumValue = this.parseValue(this.minimumSlider.value, this.minimumBound);
     const maximumValue = this.parseValue(this.maximumSlider.value, this.maximumBound);
+    const range = this.maximumBound - this.minimumBound;
 
-    const left = ((minimumValue - this.minimumBound) / (this.maximumBound - this.minimumBound)) * 100;
-    const right = ((maximumValue - this.minimumBound) / (this.maximumBound - this.minimumBound)) * 100;
+    if (this.progressBar && range > 0) {
+      const left = ((minimumValue - this.minimumBound) / range) * 100;
+      const right = ((maximumValue - this.minimumBound) / range) * 100;
 
-    this.progressBar.style.left = `${left}%`;
-    this.progressBar.style.width = `${Math.max(right - left, 0)}%`;
+      this.progressBar.style.left = `${left}%`;
+      this.progressBar.style.width = `${Math.max(right - left, 0)}%`;
+    }
+
+    this.updateDisplays();
   }
 
   onTextInput(event) {
