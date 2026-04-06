@@ -3,6 +3,13 @@
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 
+{%- liquid
+  assign use_sidebar_layout = false
+  if section.settings.filter_type == 'vertical' and section.settings.enable_filtering
+    assign use_sidebar_layout = true
+  endif
+-%}
+
 {%- if section.settings.enable_quick_add -%}
   {{ 'quick-add.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
@@ -19,6 +26,41 @@
     .section-{{ section.id }}-padding {
       padding-top: {{ section.settings.padding_top }}px;
       padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+
+    .section-{{ section.id }}-padding .collection-layout--sidebar {
+      gap: 3rem;
+    }
+
+    .section-{{ section.id }}-padding .collection-layout--sidebar .facets-wrapper {
+      padding-right: 0;
+    }
+
+    .section-{{ section.id }}-padding .collection-layout--sidebar .facets__form-vertical {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .section-{{ section.id }}-padding .collection-layout--sidebar {
+      display: block;
+    }
+
+    .section-{{ section.id }}-padding .collection-layout--sidebar .facets-wrapper {
+      margin-bottom: 3rem;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }}-padding .collection-layout--sidebar {
+      display: grid;
+      grid-template-columns: minmax(24rem, 1fr) minmax(0, 3fr);
+      align-items: start;
+    }
+
+    .section-{{ section.id }}-padding .collection-layout--sidebar .product-grid-container {
+      min-width: 0;
     }
   }
 {%- endstyle -%}
@@ -97,7 +139,7 @@
       </facet-filters-form>
     {%- endif -%}
 
-    <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
+    <div class="{% if section.settings.filter_type == 'vertical' %}facets-vertical page-width{% endif %}{% if use_sidebar_layout %} collection-layout collection-layout--sidebar{% endif %}">
       {{ 'component-facets.css' | asset_url | stylesheet_tag }}
       <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
       {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
@@ -274,7 +316,7 @@
           "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label"
         }
       ],
-      "default": "horizontal",
+      "default": "vertical",
       "label": "t:sections.main-collection-product-grid.settings.filter_type.label",
       "info": "t:sections.main-collection-product-grid.settings.filter_type.info"
     },
