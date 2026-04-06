@@ -5,7 +5,7 @@
 
 {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
   {{ 'component-facets.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'store-section-render.js' | asset_url }}" defer="defer"></script>
 {%- endif -%}
 
 <script src="{{ 'main-search.js' | asset_url }}" defer="defer"></script>

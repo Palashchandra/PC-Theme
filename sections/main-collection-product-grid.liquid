@@ -129,7 +129,7 @@
 
     <div class="{% if section.settings.filter_type == 'vertical' %}facets-vertical page-width{% endif %}{% if use_sidebar_layout %} collection-layout--bootstrap row g-4 g-lg-5 align-items-start{% endif %}">
       {{ 'component-facets.css' | asset_url | stylesheet_tag }}
-      <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+      <script src="{{ 'store-section-render.js' | asset_url }}" defer="defer"></script>
       {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
         <aside
           aria-labelledby="verticalTitle"
