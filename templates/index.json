@@ -29,22 +29,6 @@
         "padding_bottom": 40
       }
     },
-    "about_us_feature_QCMMJT": {
-      "type": "about-us-feature",
-      "name": "About us feature",
-      "settings": {
-        "color_scheme": "background-1",
-        "section_label": "About us",
-        "section_title": "Built with care, designed for everyday life.",
-        "section_description": "<p>Use this section to introduce your brand story, your values, and what makes your business different.</p>",
-        "content_title": "We create thoughtful products that blend quality, comfort, and purpose.",
-        "content_description": "<p>Share a stronger brand statement here. Talk about your mission, how your products are made, or why customers keep coming back to your store.</p>",
-        "button_label": "About us",
-        "button_link": "",
-        "padding_top": 60,
-        "padding_bottom": 60
-      }
-    },
     "pc_all_products_7yQ78f": {
       "type": "pc-all-products",
       "name": "PC All Products",
@@ -60,6 +44,22 @@
         "columns_desktop": 4,
         "columns_mobile": "2",
         "color_scheme": "background-1",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "about_us_feature_QCMMJT": {
+      "type": "about-us-feature",
+      "name": "About us feature",
+      "settings": {
+        "color_scheme": "background-1",
+        "section_label": "About us",
+        "section_title": "Built with care, designed for everyday life.",
+        "section_description": "<p>Use this section to introduce your brand story, your values, and what makes your business different.</p>",
+        "content_title": "We create thoughtful products that blend quality, comfort, and purpose.",
+        "content_description": "<p>Share a stronger brand statement here. Talk about your mission, how your products are made, or why customers keep coming back to your store.</p>",
+        "button_label": "About us",
+        "button_link": "",
         "padding_top": 60,
         "padding_bottom": 60
       }
