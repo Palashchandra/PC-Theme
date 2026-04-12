@@ -349,16 +349,27 @@
 }
 .pc-product-meta a:hover { text-decoration: underline; }
 
-/* App blocks container */
-.pc-app-blocks {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 20px;
+/* App blocks */
+.pc-app-block { width: 100%; margin-top: 6px; }
+
+/* Block: description (short, inside info col) */
+.pc-block-description { font-size: 1.4rem; line-height: 1.75; color: rgba(var(--color-base-text), 0.8); }
+.pc-block-description p:first-child { margin-top: 0; }
+.pc-block-description p:last-child  { margin-bottom: 0; }
+
+/* Block: text */
+.pc-block-text { font-size: 1.4rem; line-height: 1.7; color: rgb(var(--color-base-text)); }
+.pc-block-notice {
+  padding: 12px 16px;
+  background: rgba(var(--color-base-accent-2), 0.1);
+  border-left: 3px solid rgb(var(--color-base-accent-2));
+  border-radius: 0 {{ settings.card_corner_radius }}px {{ settings.card_corner_radius }}px 0;
+  font-size: 1.3rem;
 }
-.pc-app-block {
-  width: 100%;
-}
+.pc-block-muted { color: rgba(var(--color-base-text), 0.5); font-size: 1.25rem; }
+
+/* Block: custom liquid */
+.pc-block-custom { font-size: 1.4rem; }
 
 /* ============================================================
    Tabs Section
@@ -602,193 +613,236 @@
       {%- endif -%}
     </div><!-- /gallery col -->
 
-    <!-- RIGHT: Product Info -->
+    <!-- RIGHT: Product Info — fully block-driven, drag & drop in theme editor -->
     <div class="pc-info-col">
-      {%- if product.vendor != blank -%}
-        <p class="pc-product-vendor">{{ product.vendor }}</p>
-      {%- endif -%}
 
-      <h2 class="pc-product-title">{{ product.title | escape }}</h2>
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
 
-      <!-- Star rating (from metafields) -->
-      {%- if product.metafields.reviews.rating.value != blank -%}
-        <div class="pc-rating-row">
-          <span class="pc-stars" aria-hidden="true">
-            {%- assign rv = product.metafields.reviews.rating.value.rating | round -%}
-            {%- for i in (1..5) -%}
-              {%- if i <= rv -%}&#9733;{%- else -%}&#9734;{%- endif -%}
-            {%- endfor -%}
-          </span>
-          <span class="pc-rating-count">
-            {{ product.metafields.reviews.rating.value }} / {{ product.metafields.reviews.rating.value.scale_max }}
-            {%- if product.metafields.reviews.rating_count -%}
-              &nbsp;&bull;&nbsp;{{ product.metafields.reviews.rating_count }} {{ 'accessibility.total_reviews' | t }}
-            {%- endif -%}
-          </span>
-        </div>
-      {%- endif -%}
-
-      <!-- Price -->
-      {%- assign cv = product.selected_or_first_available_variant -%}
-      <div class="pc-price-block" id="price-{{ section.id }}" role="status">
-        <span class="pc-price-current">
-          {%- if settings.currency_code_enabled -%}
-            {{ cv.price | money_with_currency }}
-          {%- else -%}
-            {{ cv.price | money }}
-          {%- endif -%}
-        </span>
-        {%- if cv.compare_at_price > cv.price -%}
-          <span class="pc-price-compare">
-            {%- if settings.currency_code_enabled -%}
-              {{ cv.compare_at_price | money_with_currency }}
-            {%- else -%}
-              {{ cv.compare_at_price | money }}
-            {%- endif -%}
-          </span>
-          {%- assign savings = cv.compare_at_price | minus: cv.price -%}
-          <span class="pc-price-saving">
-            Save
-            {%- if settings.currency_code_enabled -%}
-              {{ savings | money_with_currency }}
-            {%- else -%}
-              {{ savings | money }}
-            {%- endif -%}
-          </span>
-        {%- endif -%}
-      </div>
-
-      {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
-        <p class="pc-tax-info">
-          {%- if shop.taxes_included -%}{{ 'products.product.include_taxes' | t }}{%- endif -%}
-          {%- if shop.taxes_included and shop.shipping_policy.body != blank -%} &bull; {%- endif -%}
-          {%- if shop.shipping_policy.body != blank -%}{{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}{%- endif -%}
-        </p>
-      {%- endif -%}
-
-      <div class="pc-divider"></div>
-
-      <!-- Variant Picker -->
-      {%- unless product.has_only_default_variant -%}
-        {%- for option in product.options_with_values -%}
-          <p class="pc-variant-label">
-            {{ option.name }}:&nbsp;<strong>{{ option.selected_value }}</strong>
-          </p>
-          <div class="pc-variant-options">
-            {%- for value in option.values -%}
-              {%- assign opt_key = 'option' | append: forloop.parentloop.index -%}
-              {%- assign is_active = false -%}
-              {%- if value == product.selected_or_first_available_variant[opt_key] -%}
-                {%- assign is_active = true -%}
-              {%- endif -%}
-              <button
-                type="button"
-                class="pc-variant-btn{% if is_active %} is-active{% endif %}"
-                data-option-index="{{ forloop.parentloop.index0 }}"
-                data-option-value="{{ value | escape }}"
-                aria-label="{{ option.name }}: {{ value }}"
-              >{{ value }}</button>
-            {%- endfor -%}
-          </div>
-        {%- endfor -%}
-        <div class="pc-divider"></div>
-      {%- endunless -%}
-
-      <!-- Quantity + Stock -->
-      <div class="pc-qty-row">
-        <span class="pc-qty-label">Qty:</span>
-        <div class="pc-qty-wrap">
-          <button class="pc-qty-btn" type="button" onclick="pcQty(this,-1,'pc-qty-{{ section.id }}')" aria-label="Decrease">&minus;</button>
-          <input
-            id="pc-qty-{{ section.id }}"
-            class="pc-qty-number"
-            type="number"
-            name="quantity"
-            value="1"
-            min="1"
-            form="{{ product_form_id }}"
-            aria-label="Quantity"
-          >
-          <button class="pc-qty-btn" type="button" onclick="pcQty(this,1,'pc-qty-{{ section.id }}')" aria-label="Increase">&#43;</button>
-        </div>
-        {%- if product.selected_or_first_available_variant.available -%}
-          <span class="pc-stock-in"><span class="pc-stock-dot"></span>In Stock</span>
-        {%- else -%}
-          <span class="pc-stock-out"><span class="pc-stock-dot"></span>Out of Stock</span>
-        {%- endif -%}
-      </div>
-
-      <!-- Add to Cart + Buy Now -->
-      <product-form class="product-form" data-hide-errors="false">
-        <div class="product-form__error-message-wrapper" role="alert" hidden>
-          <span class="product-form__error-message"></span>
-        </div>
-        {%- form 'product', product,
-          id: product_form_id,
-          class: 'form',
-          novalidate: 'novalidate',
-          data-type: 'add-to-cart-form'
-        -%}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled class="product-variant-id">
-          <div class="pc-btn-group">
-            <button
-              type="submit"
-              name="add"
-              class="pc-btn-atc"
-              {%- unless product.selected_or_first_available_variant.available %} disabled{%- endunless -%}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 2 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6l-3-4H6zm0 0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-              </svg>
-              {%- if product.selected_or_first_available_variant.available -%}
-                {{ 'products.product.add_to_cart' | t }}
-              {%- else -%}
-                {{ 'products.product.sold_out' | t }}
-              {%- endif -%}
-            </button>
-
-            {%- if section.settings.show_buy_now and product.selected_or_first_available_variant.available -%}
-              {{ form | payment_button }}
-            {%- endif -%}
-          </div>
-        {%- endform -%}
-      </product-form>
-
-      <!-- Product meta -->
-      <div class="pc-divider"></div>
-      <div class="pc-product-meta">
-        {%- if product.selected_or_first_available_variant.sku != blank -%}
-          <span><b>SKU:</b> {{ product.selected_or_first_available_variant.sku }}</span>
-        {%- endif -%}
-        {%- if product.type != blank -%}
-          <span><b>Category:</b> {{ product.type }}</span>
-        {%- endif -%}
-        {%- if product.vendor != blank -%}
-          <span><b>Brand:</b> {{ product.vendor }}</span>
-        {%- endif -%}
-        {%- if product.tags.size > 0 -%}
-          <span>
-            <b>Tags:</b>
-            {%- for tag in product.tags limit: 6 -%}
-              <a href="{{ routes.collections_url }}/all/{{ tag | handleize }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
-            {%- endfor -%}
-          </span>
-        {%- endif -%}
-      </div>
-
-      <!-- App blocks — add any installed app block here via the theme editor -->
-      {%- assign app_blocks = section.blocks | where: 'type', '@app' -%}
-      {%- if app_blocks.size > 0 -%}
-        <div class="pc-app-blocks">
-          {%- for block in app_blocks -%}
+          {%- when '@app' -%}
             <div class="pc-app-block" {{ block.shopify_attributes }}>
               {% render block %}
             </div>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
+
+          {%- when 'title' -%}
+            <div {{ block.shopify_attributes }}>
+              <h2 class="pc-product-title">{{ product.title | escape }}</h2>
+            </div>
+
+          {%- when 'vendor' -%}
+            {%- if product.vendor != blank -%}
+              <p class="pc-product-vendor" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
+            {%- endif -%}
+
+          {%- when 'rating' -%}
+            {%- if product.metafields.reviews.rating.value != blank -%}
+              <div class="pc-rating-row" {{ block.shopify_attributes }}>
+                <span class="pc-stars" aria-hidden="true">
+                  {%- assign rv = product.metafields.reviews.rating.value.rating | round -%}
+                  {%- for i in (1..5) -%}
+                    {%- if i <= rv -%}&#9733;{%- else -%}&#9734;{%- endif -%}
+                  {%- endfor -%}
+                </span>
+                <span class="pc-rating-count">
+                  {{ product.metafields.reviews.rating.value }} / {{ product.metafields.reviews.rating.value.scale_max }}
+                  {%- if product.metafields.reviews.rating_count -%}
+                    &nbsp;&bull;&nbsp;{{ product.metafields.reviews.rating_count }} {{ 'accessibility.total_reviews' | t }}
+                  {%- endif -%}
+                </span>
+              </div>
+            {%- endif -%}
+
+          {%- when 'price' -%}
+            {%- assign cv = product.selected_or_first_available_variant -%}
+            <div {{ block.shopify_attributes }}>
+              <div class="pc-price-block" id="price-{{ section.id }}" role="status">
+                <span class="pc-price-current">
+                  {%- if settings.currency_code_enabled -%}
+                    {{ cv.price | money_with_currency }}
+                  {%- else -%}
+                    {{ cv.price | money }}
+                  {%- endif -%}
+                </span>
+                {%- if cv.compare_at_price > cv.price -%}
+                  <span class="pc-price-compare">
+                    {%- if settings.currency_code_enabled -%}
+                      {{ cv.compare_at_price | money_with_currency }}
+                    {%- else -%}
+                      {{ cv.compare_at_price | money }}
+                    {%- endif -%}
+                  </span>
+                  {%- assign savings = cv.compare_at_price | minus: cv.price -%}
+                  <span class="pc-price-saving">
+                    Save
+                    {%- if settings.currency_code_enabled -%}
+                      {{ savings | money_with_currency }}
+                    {%- else -%}
+                      {{ savings | money }}
+                    {%- endif -%}
+                  </span>
+                {%- endif -%}
+              </div>
+              {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+                <p class="pc-tax-info">
+                  {%- if shop.taxes_included -%}{{ 'products.product.include_taxes' | t }}{%- endif -%}
+                  {%- if shop.taxes_included and shop.shipping_policy.body != blank -%} &bull; {%- endif -%}
+                  {%- if shop.shipping_policy.body != blank -%}{{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}{%- endif -%}
+                </p>
+              {%- endif -%}
+            </div>
+
+          {%- when 'divider' -%}
+            <div class="pc-divider" {{ block.shopify_attributes }}></div>
+
+          {%- when 'variant_picker' -%}
+            {%- unless product.has_only_default_variant -%}
+              <div {{ block.shopify_attributes }}>
+                {%- for option in product.options_with_values -%}
+                  <p class="pc-variant-label">
+                    {{ option.name }}:&nbsp;<strong>{{ option.selected_value }}</strong>
+                  </p>
+                  <div class="pc-variant-options">
+                    {%- for value in option.values -%}
+                      {%- assign opt_key = 'option' | append: forloop.parentloop.index -%}
+                      {%- assign is_active = false -%}
+                      {%- if value == product.selected_or_first_available_variant[opt_key] -%}
+                        {%- assign is_active = true -%}
+                      {%- endif -%}
+                      <button
+                        type="button"
+                        class="pc-variant-btn{% if is_active %} is-active{% endif %}"
+                        data-option-index="{{ forloop.parentloop.index0 }}"
+                        data-option-value="{{ value | escape }}"
+                        aria-label="{{ option.name }}: {{ value }}"
+                      >{{ value }}</button>
+                    {%- endfor -%}
+                  </div>
+                {%- endfor -%}
+              </div>
+            {%- endunless -%}
+
+          {%- when 'quantity_selector' -%}
+            <div class="pc-qty-row" {{ block.shopify_attributes }}>
+              <span class="pc-qty-label">{{ block.settings.label | default: 'Qty' }}:</span>
+              <div class="pc-qty-wrap">
+                <button class="pc-qty-btn" type="button" onclick="pcQty(this,-1,'pc-qty-{{ section.id }}')" aria-label="Decrease">&minus;</button>
+                <input
+                  id="pc-qty-{{ section.id }}"
+                  class="pc-qty-number"
+                  type="number"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  form="{{ product_form_id }}"
+                  aria-label="Quantity"
+                >
+                <button class="pc-qty-btn" type="button" onclick="pcQty(this,1,'pc-qty-{{ section.id }}')" aria-label="Increase">&#43;</button>
+              </div>
+              {%- if block.settings.show_stock -%}
+                {%- if product.selected_or_first_available_variant.available -%}
+                  <span class="pc-stock-in"><span class="pc-stock-dot"></span>In Stock</span>
+                {%- else -%}
+                  <span class="pc-stock-out"><span class="pc-stock-dot"></span>Out of Stock</span>
+                {%- endif -%}
+              {%- endif -%}
+            </div>
+
+          {%- when 'buy_buttons' -%}
+            <div {{ block.shopify_attributes }}>
+              <product-form class="product-form" data-hide-errors="false">
+                <div class="product-form__error-message-wrapper" role="alert" hidden>
+                  <span class="product-form__error-message"></span>
+                </div>
+                {%- form 'product', product,
+                  id: product_form_id,
+                  class: 'form',
+                  novalidate: 'novalidate',
+                  data-type: 'add-to-cart-form'
+                -%}
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled class="product-variant-id">
+                  <div class="pc-btn-group">
+                    <button
+                      type="submit"
+                      name="add"
+                      class="pc-btn-atc"
+                      {%- unless product.selected_or_first_available_variant.available %} disabled{%- endunless -%}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 2 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6l-3-4H6z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                      </svg>
+                      {%- if product.selected_or_first_available_variant.available -%}
+                        {{ 'products.product.add_to_cart' | t }}
+                      {%- else -%}
+                        {{ 'products.product.sold_out' | t }}
+                      {%- endif -%}
+                    </button>
+                    {%- if block.settings.show_dynamic_checkout and product.selected_or_first_available_variant.available -%}
+                      {{ form | payment_button }}
+                    {%- endif -%}
+                  </div>
+                {%- endform -%}
+              </product-form>
+            </div>
+
+          {%- when 'description' -%}
+            {%- if product.description != blank -%}
+              <div class="pc-block-description rte" {{ block.shopify_attributes }}>
+                {{ product.description }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'sku' -%}
+            {%- if product.selected_or_first_available_variant.sku != blank -%}
+              <p
+                class="pc-product-meta"
+                id="Sku-{{ section.id }}"
+                role="status"
+                {{ block.shopify_attributes }}
+              >
+                <span><b>SKU:</b> {{ product.selected_or_first_available_variant.sku }}</span>
+              </p>
+            {%- endif -%}
+
+          {%- when 'product_meta' -%}
+            <div class="pc-product-meta" {{ block.shopify_attributes }}>
+              {%- if block.settings.show_sku and product.selected_or_first_available_variant.sku != blank -%}
+                <span><b>SKU:</b> {{ product.selected_or_first_available_variant.sku }}</span>
+              {%- endif -%}
+              {%- if block.settings.show_type and product.type != blank -%}
+                <span><b>Category:</b> {{ product.type }}</span>
+              {%- endif -%}
+              {%- if block.settings.show_vendor and product.vendor != blank -%}
+                <span><b>Brand:</b> {{ product.vendor }}</span>
+              {%- endif -%}
+              {%- if block.settings.show_tags and product.tags.size > 0 -%}
+                <span>
+                  <b>Tags:</b>
+                  {%- for tag in product.tags limit: 6 -%}
+                    <a href="{{ routes.collections_url }}/all/{{ tag | handleize }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+                  {%- endfor -%}
+                </span>
+              {%- endif -%}
+            </div>
+
+          {%- when 'text' -%}
+            {%- if block.settings.text != blank -%}
+              <div
+                class="pc-block-text{% if block.settings.style == 'notice' %} pc-block-notice{% elsif block.settings.style == 'muted' %} pc-block-muted{% endif %}"
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.text }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'custom_liquid' -%}
+            <div class="pc-block-custom" {{ block.shopify_attributes }}>
+              {{ block.settings.custom_liquid }}
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
 
     </div><!-- /info col -->
 
@@ -1072,16 +1126,6 @@
     },
     {
       "type": "header",
-      "content": "Buttons"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_buy_now",
-      "label": "Show Buy It Now Button",
-      "default": true
-    },
-    {
-      "type": "header",
       "content": "Tabs"
     },
     {
@@ -1115,6 +1159,169 @@
   "blocks": [
     {
       "type": "@app"
+    },
+    {
+      "type": "vendor",
+      "name": "Brand / Vendor",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "title",
+      "name": "Product Title",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "rating",
+      "name": "Star Rating",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": []
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant Picker",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "quantity_selector",
+      "name": "Quantity Selector",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Qty"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_stock",
+          "label": "Show stock status",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "Show dynamic checkout button",
+          "info": "Shows payment options like Shop Pay, PayPal etc.",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Product Description",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "sku",
+      "name": "SKU",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "product_meta",
+      "name": "Product Meta",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_sku",
+          "label": "Show SKU",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_type",
+          "label": "Show category / type",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "Show brand",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_tags",
+          "label": "Show tags",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Content",
+          "default": "Add a custom note, policy snippet, or promotional message here."
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "normal", "label": "Normal" },
+            { "value": "notice", "label": "Notice (highlighted)" },
+            { "value": "muted",  "label": "Muted" }
+          ],
+          "default": "normal"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Liquid code",
+          "info": "Add custom Liquid or HTML to the product info column."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "PC Product Page",
+      "blocks": [
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "rating" },
+        { "type": "price" },
+        { "type": "divider" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "buy_buttons" },
+        { "type": "divider" },
+        { "type": "product_meta" }
+      ]
     }
   ]
 }
