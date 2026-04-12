@@ -96,7 +96,6 @@
 .collection-filter-products-image-wrap {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 4 / 4.8;
   background: rgba(var(--color-foreground), 0.05);
 }
 
