@@ -1,9 +1,9 @@
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
 {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
 {{ 'component-rating.css' | asset_url | stylesheet_tag }}
-{{ 'section-related-products.css' | asset_url | stylesheet_tag }}
+{{ 'section-collection-filter-products.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'collection-filter-products.js' | asset_url }}" defer="defer"></script>
 
 <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'product-form.js' | asset_url }}" defer="defer" type="module"></script>
@@ -899,46 +899,42 @@
       data-section="{{ section.id }}"
     >
       {%- if recommendations.performed and recommendations.products_count > 0 -%}
-        <ul class="pc-related-grid" role="list">
+        <div class="pc-related-grid">
           {%- for rec in recommendations.products -%}
-            <li>
-              {% render 'card-product',
-                card_product: rec,
-                media_aspect_ratio: section.settings.related_image_ratio,
-                show_secondary_image: section.settings.related_show_secondary_image,
-                show_vendor: section.settings.related_show_vendor,
-                show_rating: section.settings.related_show_rating,
-                show_quick_add: section.settings.enable_quick_add,
-                section_id: section.id,
-                lazy_load: true
-              %}
-            </li>
+            {% render 'collection-product-card',
+              product_card: rec,
+              button_label: section.settings.related_button_label,
+              show_quick_add: section.settings.enable_quick_add,
+              lazy_load: true,
+              image_sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+              image_widths: '375, 550, 750, 900',
+              image_width: 900,
+              quick_add_source: 'pc-product-page'
+            %}
           {%- endfor -%}
-        </ul>
+        </div>
 
       {%- elsif product.collections.size > 0 -%}
         {%- comment %} Fallback: same-collection products while recommendations load {%- endcomment %}
         {%- assign fb_coll = product.collections.first -%}
         {%- assign fb_count = 0 -%}
-        <ul class="pc-related-grid" role="list">
+        <div class="pc-related-grid">
           {%- for fp in fb_coll.products -%}
             {%- unless fp.id == product.id or fb_count >= 4 -%}
               {%- assign fb_count = fb_count | plus: 1 -%}
-              <li>
-                {% render 'card-product',
-                  card_product: fp,
-                  media_aspect_ratio: section.settings.related_image_ratio,
-                  show_secondary_image: section.settings.related_show_secondary_image,
-                  show_vendor: section.settings.related_show_vendor,
-                  show_rating: section.settings.related_show_rating,
-                  show_quick_add: section.settings.enable_quick_add,
-                  section_id: section.id,
-                  lazy_load: true
-                %}
-              </li>
+              {% render 'collection-product-card',
+                product_card: fp,
+                button_label: section.settings.related_button_label,
+                show_quick_add: section.settings.enable_quick_add,
+                lazy_load: true,
+                image_sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                image_widths: '375, 550, 750, 900',
+                image_width: 900,
+                quick_add_source: 'pc-product-page'
+              %}
             {%- endunless -%}
           {%- endfor -%}
-        </ul>
+        </div>
       {%- endif -%}
     </product-recommendations>
   </div>
@@ -1080,39 +1076,16 @@
       "default": "You May Also Like"
     },
     {
-      "type": "select",
-      "id": "related_image_ratio",
-      "label": "Image Ratio",
-      "options": [
-        { "value": "adapt",    "label": "Adapt to image" },
-        { "value": "portrait", "label": "Portrait" },
-        { "value": "square",   "label": "Square" }
-      ],
-      "default": "adapt"
-    },
-    {
-      "type": "checkbox",
-      "id": "related_show_secondary_image",
-      "label": "Show second image on hover",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "related_show_vendor",
-      "label": "Show vendor",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "related_show_rating",
-      "label": "Show rating",
-      "default": false
+      "type": "text",
+      "id": "related_button_label",
+      "label": "Card Button Label",
+      "default": "Buy now"
     },
     {
       "type": "checkbox",
       "id": "enable_quick_add",
       "label": "Enable quick add button",
-      "default": false
+      "default": true
     }
   ]
 }
