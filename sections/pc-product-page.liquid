@@ -349,6 +349,17 @@
 }
 .pc-product-meta a:hover { text-decoration: underline; }
 
+/* App blocks container */
+.pc-app-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+.pc-app-block {
+  width: 100%;
+}
+
 /* ============================================================
    Tabs Section
    ============================================================ */
@@ -766,6 +777,19 @@
           </span>
         {%- endif -%}
       </div>
+
+      <!-- App blocks — add any installed app block here via the theme editor -->
+      {%- assign app_blocks = section.blocks | where: 'type', '@app' -%}
+      {%- if app_blocks.size > 0 -%}
+        <div class="pc-app-blocks">
+          {%- for block in app_blocks -%}
+            <div class="pc-app-block" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
     </div><!-- /info col -->
 
   </product-info>
@@ -1086,6 +1110,11 @@
       "id": "enable_quick_add",
       "label": "Enable quick add button",
       "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ]
 }
