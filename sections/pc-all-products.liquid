@@ -1,0 +1,420 @@
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'section-collection-filter-products.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'collection-filter-products.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign source_collection = section.settings.collection | default: collections.all
+  if source_collection == blank or source_collection.all_products_count == 0
+    assign source_collection = collections.all
+  endif
+
+  case section.settings.columns_mobile
+    when '1'
+      assign col_mobile = 'col-12'
+    else
+      assign col_mobile = 'col-6'
+  endcase
+
+  case section.settings.columns_desktop
+    when 2
+      assign col_desktop = 'col-lg-6'
+    when 3
+      assign col_desktop = 'col-lg-4'
+    else
+      assign col_desktop = 'col-lg-3'
+  endcase
+
+  assign col_classes = col_mobile | append: ' col-md-6 ' | append: col_desktop
+-%}
+
+{%- style -%}
+.pc-all-products-section {
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+}
+@media screen and (max-width: 749px) {
+  .pc-all-products-section {
+    padding-top: {{ section.settings.padding_top | times: 0.6 | round }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.6 | round }}px;
+  }
+}
+
+/* Section header */
+.pc-all-products-header {
+  margin-bottom: 36px;
+}
+.pc-all-products-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.pc-all-products-title {
+  font-size: clamp(2.2rem, 3vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: rgb(var(--color-base-text));
+  font-family: var(--font-heading-family);
+  margin: 0;
+  position: relative;
+  padding-bottom: 12px;
+}
+.pc-all-products-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 52px;
+  height: 3px;
+  background: rgb(var(--color-base-accent-2));
+  border-radius: 2px;
+}
+.pc-all-products-subtitle {
+  font-size: 1.4rem;
+  color: rgba(var(--color-base-text), 0.6);
+  margin: 14px 0 0;
+  line-height: 1.6;
+  font-family: var(--font-body-family);
+  max-width: 600px;
+}
+.pc-all-products-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: rgb(var(--color-base-accent-2));
+  text-decoration: none;
+  border-bottom: 1px solid rgb(var(--color-base-accent-2));
+  padding-bottom: 2px;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.pc-all-products-view-all:hover { opacity: 0.75; }
+.pc-all-products-view-all svg { width: 14px; height: 14px; }
+
+/* Product count badge */
+.pc-all-products-count {
+  display: inline-block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(var(--color-base-text), 0.45);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Grid */
+.pc-all-products-grid {
+  display: grid;
+  gap: {{ settings.spacing_grid_vertical }}px {{ settings.spacing_grid_horizontal }}px;
+}
+.pc-all-products-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.pc-all-products-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.pc-all-products-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+@media screen and (max-width: 989px) {
+  .pc-all-products-grid.cols-4,
+  .pc-all-products-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media screen and (max-width: 479px) {
+  .pc-all-products-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .pc-all-products-grid.cols-4,
+  .pc-all-products-grid.cols-3 {
+    grid-template-columns: {% if section.settings.columns_mobile == '1' %}1fr{% else %}repeat(2, 1fr){% endif %};
+  }
+}
+
+/* Empty state */
+.pc-all-products-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(var(--color-base-text), 0.45);
+  font-size: 1.5rem;
+  font-family: var(--font-body-family);
+}
+
+/* Load more / pagination */
+.pc-all-products-footer {
+  text-align: center;
+  margin-top: 40px;
+}
+.pc-all-products-showing {
+  font-size: 1.3rem;
+  color: rgba(var(--color-base-text), 0.45);
+  margin-bottom: 16px;
+  font-family: var(--font-body-family);
+}
+.pc-all-products-showing span {
+  font-weight: 700;
+  color: rgb(var(--color-base-text));
+}
+.pc-progress-bar {
+  width: 200px;
+  height: 4px;
+  background: rgba(var(--color-base-text), 0.1);
+  border-radius: 4px;
+  margin: 0 auto 20px;
+  overflow: hidden;
+}
+.pc-progress-bar-fill {
+  height: 100%;
+  background: rgb(var(--color-base-accent-2));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.pc-btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 36px;
+  background: rgb(var(--color-base-accent-1));
+  color: rgb(var(--color-base-solid-button-labels));
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: {{ settings.buttons_border_thickness }}px solid rgb(var(--color-base-accent-1));
+  border-radius: {{ settings.buttons_radius }}px;
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+  font-family: var(--font-body-family);
+}
+.pc-btn-view-all:hover { opacity: 0.85; color: rgb(var(--color-base-solid-button-labels)); }
+.pc-btn-view-all svg { width: 16px; height: 16px; }
+{%- endstyle -%}
+
+{%- assign products_limit = section.settings.products_to_show -%}
+{%- assign total_count = source_collection.all_products_count -%}
+{%- assign showing_count = products_limit | at_most: total_count -%}
+{%- assign progress_pct = showing_count | times: 100 | divided_by: total_count -%}
+
+<section
+  id="PcAllProducts-{{ section.id }}"
+  class="pc-all-products-section color-{{ section.settings.color_scheme }} gradient"
+>
+  <div class="page-width">
+
+    <!-- Header -->
+    <div class="pc-all-products-header">
+      <div class="pc-all-products-top">
+        <div>
+          {%- if section.settings.title != blank -%}
+            <h2 class="pc-all-products-title">
+              {{ section.settings.title | escape }}
+              {%- if section.settings.show_product_count and total_count > 0 -%}
+                <span class="pc-all-products-count">({{ total_count }})</span>
+              {%- endif -%}
+            </h2>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.show_view_all and total_count > products_limit -%}
+          <a href="{{ source_collection.url }}" class="pc-all-products-view-all">
+            View all
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.subtitle != blank -%}
+        <p class="pc-all-products-subtitle">{{ section.settings.subtitle | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- Product Grid -->
+    {%- if source_collection.products_count > 0 -%}
+      <div class="pc-all-products-grid cols-{{ section.settings.columns_desktop }}">
+        {%- for product in source_collection.products limit: products_limit -%}
+          {% render 'collection-product-card',
+            product_card: product,
+            button_label: section.settings.button_label,
+            show_quick_add: section.settings.enable_quick_add,
+            lazy_load: true,
+            image_sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+            image_widths: '375, 550, 750, 900',
+            image_width: 900,
+            quick_add_source: 'pc-all-products'
+          %}
+        {%- endfor -%}
+      </div>
+
+      <!-- Footer: progress + view all CTA -->
+      {%- if section.settings.show_view_all -%}
+        <div class="pc-all-products-footer">
+          {%- if total_count > products_limit -%}
+            <p class="pc-all-products-showing">
+              Showing <span>{{ showing_count }}</span> of <span>{{ total_count }}</span> products
+            </p>
+            <div class="pc-progress-bar" role="progressbar" aria-valuenow="{{ showing_count }}" aria-valuemin="0" aria-valuemax="{{ total_count }}">
+              <div class="pc-progress-bar-fill" style="width:{{ progress_pct }}%;"></div>
+            </div>
+            <a href="{{ source_collection.url }}" class="pc-btn-view-all">
+              View all {{ total_count }} products
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+      <p class="pc-all-products-empty">
+        No products found. Select a collection in the theme editor or add products to your store.
+      </p>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "PC All Products",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "All Products"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "info": "Optional description shown below the title"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count next to title",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Leave empty to show all products from your store"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 8,
+      "label": "Products to show"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Card Button Label",
+      "default": "Buy now"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_add",
+      "label": "Enable quick add button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View All button & progress bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4,
+      "label": "Columns (desktop)"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "options": [
+        { "value": "accent-1",    "label": "Accent 1" },
+        { "value": "accent-2",    "label": "Accent 2" },
+        { "value": "background-1","label": "Background 1" },
+        { "value": "background-2","label": "Background 2" },
+        { "value": "inverse",     "label": "Inverse" }
+      ],
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "PC All Products",
+      "settings": {
+        "title": "All Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "enable_quick_add": true,
+        "show_view_all": true,
+        "color_scheme": "background-1"
+      }
+    }
+  ]
+}
+{% endschema %}
