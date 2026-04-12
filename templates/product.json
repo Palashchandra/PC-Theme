@@ -12,6 +12,29 @@
     "main": {
       "type": "pc-product-page",
       "blocks": {
+        "title_ikTMUr": {
+          "type": "title",
+          "settings": {}
+        },
+        "rating_eNbjbc": {
+          "type": "rating",
+          "settings": {}
+        },
+        "sku_HDKU7q": {
+          "type": "sku",
+          "settings": {}
+        },
+        "price_38GT6i": {
+          "type": "price",
+          "settings": {}
+        },
+        "quantity_selector_J3aWPE": {
+          "type": "quantity_selector",
+          "settings": {
+            "label": "Qty",
+            "show_stock": true
+          }
+        },
         "staging_connector_app_product_configurator_block_4mACXp": {
           "type": "shopify://apps/staging-connector-app/blocks/product-configurator-block/92b4bd03-dbd3-418d-9368-78a14b2e547e",
           "settings": {
@@ -22,12 +45,16 @@
         }
       },
       "block_order": [
+        "title_ikTMUr",
+        "rating_eNbjbc",
+        "sku_HDKU7q",
+        "price_38GT6i",
+        "quantity_selector_J3aWPE",
         "staging_connector_app_product_configurator_block_4mACXp"
       ],
       "settings": {
         "breadcrumb_bg_color": "#f0f4f8",
         "breadcrumb_text_color": "#1a1a1a",
-        "show_buy_now": true,
         "additional_info_content": "",
         "related_heading": "You May Also Like",
         "related_button_label": "Buy now",
