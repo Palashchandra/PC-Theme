@@ -11,13 +11,27 @@
   "sections": {
     "main": {
       "type": "pc-product-page",
+      "blocks": {
+        "staging_connector_app_product_configurator_block_4mACXp": {
+          "type": "shopify://apps/staging-connector-app/blocks/product-configurator-block/92b4bd03-dbd3-418d-9368-78a14b2e547e",
+          "settings": {
+            "button_text": "Add to Cart",
+            "button_style": "primary",
+            "hide_original_form": true
+          }
+        }
+      },
+      "block_order": [
+        "staging_connector_app_product_configurator_block_4mACXp"
+      ],
       "settings": {
         "breadcrumb_bg_color": "#f0f4f8",
         "breadcrumb_text_color": "#1a1a1a",
-        "accent_color": "#e63946",
         "show_buy_now": true,
+        "additional_info_content": "",
         "related_heading": "You May Also Like",
-        "related_bg_color": "#f8f9fa"
+        "related_button_label": "Buy now",
+        "enable_quick_add": true
       }
     }
   },
