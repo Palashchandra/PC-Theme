@@ -24,17 +24,6 @@
           "type": "sku",
           "settings": {}
         },
-        "price_38GT6i": {
-          "type": "price",
-          "settings": {}
-        },
-        "quantity_selector_J3aWPE": {
-          "type": "quantity_selector",
-          "settings": {
-            "label": "Qty",
-            "show_stock": true
-          }
-        },
         "staging_connector_app_product_configurator_block_4mACXp": {
           "type": "shopify://apps/staging-connector-app/blocks/product-configurator-block/92b4bd03-dbd3-418d-9368-78a14b2e547e",
           "settings": {
@@ -48,8 +37,6 @@
         "title_ikTMUr",
         "rating_eNbjbc",
         "sku_HDKU7q",
-        "price_38GT6i",
-        "quantity_selector_J3aWPE",
         "staging_connector_app_product_configurator_block_4mACXp"
       ],
       "settings": {
