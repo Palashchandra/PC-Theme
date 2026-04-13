@@ -10,67 +10,105 @@
 {
   "sections": {
     "main": {
-      "type": "pc-product-page",
+      "type": "main-product",
       "blocks": {
-        "title_ikTMUr": {
+        "vendor": {
+          "type": "text",
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
           "type": "title",
           "settings": {}
         },
-        "rating_eNbjbc": {
-          "type": "rating",
+        "price": {
+          "type": "price",
           "settings": {}
         },
-        "variant_picker_Xpy8iy": {
-          "type": "variant_picker",
-          "settings": {}
-        },
-        "quantity_selector_4yV3xd": {
-          "type": "quantity_selector",
-          "settings": {
-            "label": "Qty",
-            "show_stock": true
-          }
-        },
-        "buy_buttons_iTH7d9": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_dynamic_checkout": true
-          }
-        },
-        "sku_HDKU7q": {
-          "type": "sku",
-          "settings": {}
-        },
-        "staging_connector_app_product_configurator_block_4mACXp": {
+        "staging_connector_app_product_configurator_block_CzpndG": {
           "type": "shopify://apps/staging-connector-app/blocks/product-configurator-block/92b4bd03-dbd3-418d-9368-78a14b2e547e",
-          "disabled": true,
           "settings": {
             "button_text": "Add to Cart",
             "button_style": "primary",
             "hide_original_form": true
           }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
         }
       },
       "block_order": [
-        "title_ikTMUr",
-        "rating_eNbjbc",
-        "variant_picker_Xpy8iy",
-        "quantity_selector_4yV3xd",
-        "buy_buttons_iTH7d9",
-        "sku_HDKU7q",
-        "staging_connector_app_product_configurator_block_4mACXp"
+        "vendor",
+        "title",
+        "price",
+        "staging_connector_app_product_configurator_block_CzpndG",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "description",
+        "share"
       ],
       "settings": {
-        "breadcrumb_bg_color": "#f0f4f8",
-        "breadcrumb_text_color": "#1a1a1a",
-        "additional_info_content": "",
-        "related_heading": "You May Also Like",
-        "related_button_label": "Buy now",
-        "enable_quick_add": true
+        "enable_sticky_info": true,
+        "media_size": "large",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "gallery_layout": "stacked",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "mobile_thumbnails": "hide",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 12
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
       }
     }
   },
   "order": [
-    "main"
+    "main",
+    "related-products"
   ]
 }
