@@ -16,15 +16,26 @@
           "type": "title",
           "settings": {}
         },
+        "rating_eNbjbc": {
+          "type": "rating",
+          "settings": {}
+        },
+        "variant_picker_Xpy8iy": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "quantity_selector_4yV3xd": {
+          "type": "quantity_selector",
+          "settings": {
+            "label": "Qty",
+            "show_stock": true
+          }
+        },
         "buy_buttons_iTH7d9": {
           "type": "buy_buttons",
           "settings": {
             "show_dynamic_checkout": true
           }
-        },
-        "rating_eNbjbc": {
-          "type": "rating",
-          "settings": {}
         },
         "sku_HDKU7q": {
           "type": "sku",
@@ -42,8 +53,10 @@
       },
       "block_order": [
         "title_ikTMUr",
-        "buy_buttons_iTH7d9",
         "rating_eNbjbc",
+        "variant_picker_Xpy8iy",
+        "quantity_selector_4yV3xd",
+        "buy_buttons_iTH7d9",
         "sku_HDKU7q",
         "staging_connector_app_product_configurator_block_4mACXp"
       ],
