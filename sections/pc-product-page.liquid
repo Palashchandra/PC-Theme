@@ -698,8 +698,8 @@
             {%- unless product.has_only_default_variant -%}
               <div {{ block.shopify_attributes }}>
                 {%- for option in product.options_with_values -%}
-                  <p class="pc-variant-label">
-                    {{ option.name }}:&nbsp;<strong>{{ option.selected_value }}</strong>
+                  <p class="pc-variant-label" data-option-index="{{ forloop.index0 }}">
+                    {{ option.name }}:&nbsp;<strong class="pc-variant-selected-val">{{ option.selected_value }}</strong>
                   </p>
                   <div class="pc-variant-options">
                     {%- for value in option.values -%}
@@ -781,6 +781,11 @@
                     {%- if block.settings.show_dynamic_checkout and product.selected_or_first_available_variant.available -%}
                       {{ form | payment_button }}
                     {%- endif -%}
+                  </div>
+                  <div class="loading-overlay__spinner hidden" aria-hidden="true">
+                    <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                      <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                    </svg>
                   </div>
                 {%- endform -%}
               </product-form>
@@ -1061,7 +1066,48 @@
     });
   });
 
-  /* Variant button active state */
+  /* Variant button active state + form variant ID update */
+  var pcProductVariants = {{ product.variants | json }};
+
+  function pcGetSelectedOptions() {
+    var selected = [];
+    document.querySelectorAll('#ProductInfo-{{ section.id }} .pc-variant-options').forEach(function (group) {
+      var active = group.querySelector('.pc-variant-btn.is-active');
+      if (active) selected.push(active.getAttribute('data-option-value'));
+    });
+    return selected;
+  }
+
+  function pcUpdateVariant() {
+    var selectedOptions = pcGetSelectedOptions();
+    var matched = null;
+    for (var i = 0; i < pcProductVariants.length; i++) {
+      var v = pcProductVariants[i];
+      var opts = [v.option1, v.option2, v.option3].filter(function (o) { return o !== null && o !== undefined; });
+      if (opts.length === selectedOptions.length && opts.every(function (o, idx) { return o === selectedOptions[idx]; })) {
+        matched = v;
+        break;
+      }
+    }
+    if (!matched) return;
+
+    /* Update hidden variant input */
+    var variantInput = document.querySelector('#{{ product_form_id }} .product-variant-id');
+    if (variantInput) variantInput.value = matched.id;
+
+    /* Update submit button state */
+    var submitBtn = document.querySelector('#{{ product_form_id }} [type="submit"]');
+    if (submitBtn) {
+      if (matched.available) {
+        submitBtn.removeAttribute('disabled');
+        submitBtn.textContent = {{ 'products.product.add_to_cart' | t | json }};
+      } else {
+        submitBtn.setAttribute('disabled', '');
+        submitBtn.textContent = {{ 'products.product.sold_out' | t | json }};
+      }
+    }
+  }
+
   document.querySelectorAll('#ProductInfo-{{ section.id }} .pc-variant-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var idx = btn.getAttribute('data-option-index');
@@ -1069,6 +1115,12 @@
         '#ProductInfo-{{ section.id }} .pc-variant-btn[data-option-index="' + idx + '"]'
       ).forEach(function (b) { b.classList.remove('is-active'); });
       btn.classList.add('is-active');
+
+      /* Update the label's displayed selected value */
+      var label = document.querySelector('#ProductInfo-{{ section.id }} .pc-variant-label[data-option-index="' + idx + '"] .pc-variant-selected-val');
+      if (label) label.textContent = btn.getAttribute('data-option-value');
+
+      pcUpdateVariant();
     });
   });
 </script>
