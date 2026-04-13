@@ -1,0 +1,96 @@
+{%- style -%}
+/* ============================================================
+   PC BREADCRUMB BANNER
+   ============================================================ */
+
+/* --- Breadcrumb Banner ------------------------------------ */
+.pc-breadcrumb-banner {
+  background-color: {{ section.settings.breadcrumb_bg_color }};
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(var(--color-base-text), 0.08);
+}
+.pc-breadcrumb-inner {
+  max-width: {{ settings.page_width }}px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pc-breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.3rem;
+  color: {{ section.settings.breadcrumb_text_color }};
+}
+.pc-breadcrumb-nav a {
+  color: {{ section.settings.breadcrumb_text_color }};
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.pc-breadcrumb-nav a:hover { opacity: 1; text-decoration: underline; }
+.pc-breadcrumb-sep { opacity: 0.4; font-size: 1.1rem; }
+.pc-breadcrumb-current { font-weight: 600; }
+.pc-breadcrumb-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: {{ section.settings.breadcrumb_text_color }};
+  margin: 0;
+  line-height: 1.3;
+  max-width: 60%;
+  text-align: right;
+}
+@media screen and (max-width: 749px) {
+  .pc-breadcrumb-inner { flex-direction: column; align-items: flex-start; }
+  .pc-breadcrumb-title { max-width: 100%; text-align: left; font-size: 1.5rem; }
+}
+{%- endstyle -%}
+
+<div class="pc-breadcrumb-banner">
+  <div class="pc-breadcrumb-inner">
+    <nav class="pc-breadcrumb-nav" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="pc-breadcrumb-sep" aria-hidden="true">&#8250;</span>
+      {%- if collection -%}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+        <span class="pc-breadcrumb-sep" aria-hidden="true">&#8250;</span>
+      {%- elsif product.collections.size > 0 -%}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+        <span class="pc-breadcrumb-sep" aria-hidden="true">&#8250;</span>
+      {%- endif -%}
+      <span class="pc-breadcrumb-current" aria-current="page">{{ product.title | escape | truncate: 60 }}</span>
+    </nav>
+    <h1 class="pc-breadcrumb-title">{{ product.title | escape | truncate: 70 }}</h1>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "PC Breadcrumb Banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color",
+      "id": "breadcrumb_bg_color",
+      "label": "Banner Background",
+      "default": "#f0f4f8"
+    },
+    {
+      "type": "color",
+      "id": "breadcrumb_text_color",
+      "label": "Banner Text Color",
+      "default": "#1a1a1a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PC Breadcrumb Banner"
+    }
+  ]
+}
+{% endschema %}

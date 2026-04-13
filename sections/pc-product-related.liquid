@@ -1,0 +1,133 @@
+{{ 'section-collection-filter-products.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'collection-filter-products.js' | asset_url }}" defer="defer"></script>
+
+{%- if section.settings.enable_quick_add -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- style -%}
+/* ============================================================
+   PC RELATED PRODUCTS
+   ============================================================ */
+
+.pc-related-section {
+  background: rgb(var(--color-base-background-1));
+  padding: 56px 0;
+  border-top: 1px solid rgba(var(--color-base-text), 0.06);
+}
+.pc-related-inner {
+  max-width: {{ settings.page_width }}px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.pc-related-heading {
+  font-size: clamp(2rem, 2.5vw, 2.8rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 32px;
+  color: rgb(var(--color-base-text));
+  font-family: var(--font-heading-family);
+}
+.pc-related-heading span {
+  display: inline-block;
+  border-bottom: 3px solid rgb(var(--color-base-accent-2));
+  padding-bottom: 6px;
+}
+.pc-related-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: {{ settings.spacing_grid_horizontal }}px;
+}
+@media screen and (max-width: 989px) {
+  .pc-related-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media screen and (max-width: 480px) {
+  .pc-related-grid { grid-template-columns: repeat(2, 1fr); }
+}
+{%- endstyle -%}
+
+<div class="pc-related-section">
+  <div class="pc-related-inner">
+    <h2 class="pc-related-heading">
+      <span>{{ section.settings.related_heading | default: 'You May Also Like' }}</span>
+    </h2>
+
+    <product-recommendations
+      data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4"
+      data-section="{{ section.id }}"
+    >
+      {%- if recommendations.performed and recommendations.products_count > 0 -%}
+        <div class="pc-related-grid">
+          {%- for rec in recommendations.products -%}
+            {% render 'collection-product-card',
+              product_card: rec,
+              button_label: section.settings.related_button_label,
+              show_quick_add: section.settings.enable_quick_add,
+              lazy_load: true,
+              image_sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+              image_widths: '375, 550, 750, 900',
+              image_width: 900,
+              quick_add_source: 'pc-product-page'
+            %}
+          {%- endfor -%}
+        </div>
+
+      {%- elsif product.collections.size > 0 -%}
+        {%- comment %} Fallback: same-collection products while recommendations load {%- endcomment %}
+        {%- assign fb_coll = product.collections.first -%}
+        {%- assign fb_count = 0 -%}
+        <div class="pc-related-grid">
+          {%- for fp in fb_coll.products -%}
+            {%- unless fp.id == product.id or fb_count >= 4 -%}
+              {%- assign fb_count = fb_count | plus: 1 -%}
+              {% render 'collection-product-card',
+                product_card: fp,
+                button_label: section.settings.related_button_label,
+                show_quick_add: section.settings.enable_quick_add,
+                lazy_load: true,
+                image_sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                image_widths: '375, 550, 750, 900',
+                image_width: 900,
+                quick_add_source: 'pc-product-page'
+              %}
+            {%- endunless -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </product-recommendations>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "PC Related Products",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "related_heading",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "text",
+      "id": "related_button_label",
+      "label": "Card Button Label",
+      "default": "Buy now"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_add",
+      "label": "Enable quick add button",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "PC Related Products"
+    }
+  ]
+}
+{% endschema %}

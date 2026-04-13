@@ -1,0 +1,264 @@
+{%- style -%}
+/* ============================================================
+   PC PRODUCT TABS — Description | Reviews | Shipping & Info
+   ============================================================ */
+
+.pc-tabs-section {
+  max-width: {{ settings.page_width }}px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+}
+.pc-tabs-nav {
+  display: flex;
+  border-bottom: 2px solid rgba(var(--color-base-text), 0.1);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 0;
+}
+.pc-tab-btn {
+  padding: 14px 30px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: rgba(var(--color-base-text), 0.5);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+  font-family: var(--font-body-family);
+  letter-spacing: 0.03em;
+}
+.pc-tab-btn:hover { color: rgb(var(--color-base-accent-2)); }
+.pc-tab-btn.is-active {
+  color: rgb(var(--color-base-accent-2));
+  border-bottom-color: rgb(var(--color-base-accent-2));
+}
+.pc-tab-panels {
+  border: 1px solid rgba(var(--color-base-text), 0.08);
+  border-top: none;
+  border-radius: 0 0 {{ settings.card_corner_radius }}px {{ settings.card_corner_radius }}px;
+}
+.pc-tab-panel {
+  display: none;
+  padding: 36px;
+  font-size: 1.4rem;
+  line-height: 1.8;
+  color: rgb(var(--color-base-text));
+  font-family: var(--font-body-family);
+}
+.pc-tab-panel.is-active { display: block; }
+.pc-tab-panel .rte h2,
+.pc-tab-panel .rte h3 { color: rgb(var(--color-base-text)); }
+@media screen and (max-width: 749px) {
+  .pc-tab-btn { padding: 12px 16px; font-size: 1.3rem; }
+  .pc-tab-panel { padding: 24px 20px; }
+}
+
+/* Reviews panel */
+.pc-reviews-empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: rgba(var(--color-base-text), 0.4);
+}
+.pc-reviews-empty svg { width: 48px; height: 48px; margin: 0 auto 14px; display: block; }
+.pc-reviews-empty p { font-size: 1.4rem; margin-bottom: 18px; }
+.pc-write-review-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background: rgb(var(--color-base-accent-2));
+  color: rgb(var(--color-base-solid-button-labels));
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-radius: {{ settings.buttons_radius }}px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.pc-write-review-btn:hover { opacity: 0.85; color: rgb(var(--color-base-solid-button-labels)); }
+.pc-review-summary {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background: rgb(var(--color-base-background-1));
+  border-radius: {{ settings.card_corner_radius }}px;
+  margin-bottom: 24px;
+}
+.pc-review-avg { font-size: 5rem; font-weight: 700; line-height: 1; color: rgb(var(--color-base-text)); }
+.pc-review-stars-lg { font-size: 2rem; color: rgb(var(--color-base-accent-2)); margin: 6px 0; }
+.pc-review-total { font-size: 1.2rem; color: rgba(var(--color-base-text), 0.5); }
+
+/* Shipping info cards */
+.pc-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.pc-info-card {
+  padding: 20px;
+  background: rgb(var(--color-base-background-1));
+  border-radius: {{ settings.card_corner_radius }}px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pc-info-card svg {
+  width: 26px;
+  height: 26px;
+  color: rgb(var(--color-base-accent-2));
+  stroke: rgb(var(--color-base-accent-2));
+  flex-shrink: 0;
+}
+.pc-info-card h4 { margin: 0; font-size: 1.4rem; color: rgb(var(--color-base-text)); }
+.pc-info-card p  { margin: 0; font-size: 1.2rem; color: rgba(var(--color-base-text), 0.6); line-height: 1.55; }
+{%- endstyle -%}
+
+<div class="pc-tabs-section">
+  <div class="pc-tabs-nav" role="tablist" id="pc-tablist-{{ section.id }}">
+    <button
+      class="pc-tab-btn is-active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="pc-tab-desc-{{ section.id }}"
+      id="pc-tab-btn-desc-{{ section.id }}"
+      type="button"
+    >{{ 'products.product.description' | t }}</button>
+    <button
+      class="pc-tab-btn"
+      role="tab"
+      aria-selected="false"
+      aria-controls="pc-tab-reviews-{{ section.id }}"
+      id="pc-tab-btn-reviews-{{ section.id }}"
+      type="button"
+    >Reviews</button>
+    <button
+      class="pc-tab-btn"
+      role="tab"
+      aria-selected="false"
+      aria-controls="pc-tab-info-{{ section.id }}"
+      id="pc-tab-btn-info-{{ section.id }}"
+      type="button"
+    >Shipping &amp; Info</button>
+  </div>
+
+  <div class="pc-tab-panels">
+
+    <!-- Description -->
+    <div id="pc-tab-desc-{{ section.id }}" class="pc-tab-panel is-active" role="tabpanel" aria-labelledby="pc-tab-btn-desc-{{ section.id }}">
+      {%- if product.description != blank -%}
+        <div class="rte">{{ product.description }}</div>
+      {%- else -%}
+        <p style="color:rgba(var(--color-base-text),0.45);text-align:center;padding:30px 0;">
+          No description available for this product.
+        </p>
+      {%- endif -%}
+    </div>
+
+    <!-- Reviews -->
+    <div id="pc-tab-reviews-{{ section.id }}" class="pc-tab-panel" role="tabpanel" aria-labelledby="pc-tab-btn-reviews-{{ section.id }}">
+      {%- if product.metafields.reviews.rating.value != blank -%}
+        <div class="pc-review-summary">
+          <div>
+            <div class="pc-review-avg">{{ product.metafields.reviews.rating.value.rating | round: 1 }}</div>
+            <div class="pc-review-stars-lg">
+              {%- assign rv2 = product.metafields.reviews.rating.value.rating | round -%}
+              {%- for i in (1..5) -%}
+                {%- if i <= rv2 -%}&#9733;{%- else -%}&#9734;{%- endif -%}
+              {%- endfor -%}
+            </div>
+            <div class="pc-review-total">
+              {%- if product.metafields.reviews.rating_count -%}
+                Based on {{ product.metafields.reviews.rating_count }} {{ 'accessibility.total_reviews' | t }}
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- else -%}
+        <div class="pc-reviews-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
+          </svg>
+          <p>No reviews yet. Be the first!</p>
+          <a href="#" class="pc-write-review-btn">Write a Review</a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Shipping & Info -->
+    <div id="pc-tab-info-{{ section.id }}" class="pc-tab-panel" role="tabpanel" aria-labelledby="pc-tab-btn-info-{{ section.id }}">
+      <div class="pc-info-grid">
+        <div class="pc-info-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+          </svg>
+          <h4>Free Shipping</h4>
+          <p>Free standard shipping on orders over $50. Express options available at checkout.</p>
+        </div>
+        <div class="pc-info-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+          </svg>
+          <h4>Easy Returns</h4>
+          <p>30-day hassle-free returns. Items must be unused and in original condition.</p>
+        </div>
+        <div class="pc-info-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+          </svg>
+          <h4>Secure Payment</h4>
+          <p>All transactions are encrypted. We accept major credit cards, PayPal &amp; more.</p>
+        </div>
+        <div class="pc-info-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/>
+          </svg>
+          <h4>24/7 Support</h4>
+          <p>Our team is always here to help with questions, orders, and product advice.</p>
+        </div>
+      </div>
+      {%- if section.settings.additional_info_content != blank -%}
+        <div class="rte" style="margin-top:28px;">{{ section.settings.additional_info_content }}</div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('#pc-tablist-{{ section.id }} .pc-tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panelId = btn.getAttribute('aria-controls');
+      document.querySelectorAll('#pc-tablist-{{ section.id }} .pc-tab-btn').forEach(function (b) {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-selected', 'true');
+      var panels = btn.closest('.pc-tabs-section').querySelectorAll('.pc-tab-panel');
+      panels.forEach(function (p) { p.classList.remove('is-active'); });
+      var target = document.getElementById(panelId);
+      if (target) target.classList.add('is-active');
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "PC Product Tabs",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "additional_info_content",
+      "label": "Shipping & Info — Extra Content"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PC Product Tabs"
+    }
+  ]
+}
+{% endschema %}

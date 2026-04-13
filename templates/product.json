@@ -9,19 +9,58 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "pc-product-page",
+    "pc-breadcrumb": {
+      "type": "pc-product-breadcrumb",
       "settings": {
         "breadcrumb_bg_color": "#f0f4f8",
-        "breadcrumb_text_color": "#1a1a1a",
-        "accent_color": "#e63946",
-        "show_buy_now": true,
+        "breadcrumb_text_color": "#1a1a1a"
+      }
+    },
+    "main": {
+      "type": "pc-product-page",
+      "blocks": {
+        "vendor": { "type": "vendor", "settings": {} },
+        "title": { "type": "title", "settings": {} },
+        "rating": { "type": "rating", "settings": {} },
+        "price": { "type": "price", "settings": {} },
+        "divider-1": { "type": "divider", "settings": {} },
+        "variant_picker": { "type": "variant_picker", "settings": {} },
+        "quantity_selector": { "type": "quantity_selector", "settings": { "label": "Qty", "show_stock": true } },
+        "buy_buttons": { "type": "buy_buttons", "settings": { "show_dynamic_checkout": true } },
+        "divider-2": { "type": "divider", "settings": {} },
+        "product_meta": { "type": "product_meta", "settings": { "show_sku": true, "show_type": true, "show_vendor": true, "show_tags": true } }
+      },
+      "blocks_order": [
+        "vendor",
+        "title",
+        "rating",
+        "price",
+        "divider-1",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "divider-2",
+        "product_meta"
+      ],
+      "settings": {}
+    },
+    "pc-tabs": {
+      "type": "pc-product-tabs",
+      "settings": {}
+    },
+    "pc-related": {
+      "type": "pc-product-related",
+      "settings": {
         "related_heading": "You May Also Like",
-        "related_bg_color": "#f8f9fa"
+        "related_button_label": "Buy now",
+        "enable_quick_add": true
       }
     }
   },
   "order": [
-    "main"
+    "pc-breadcrumb",
+    "main",
+    "pc-tabs",
+    "pc-related"
   ]
 }
