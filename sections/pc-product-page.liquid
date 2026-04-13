@@ -1123,6 +1123,43 @@
       pcUpdateVariant();
     });
   });
+
+  /* ── Cart-drawer fix ────────────────────────────────────────────
+     product-form.js looks up cart-drawer in its constructor, but
+     because it is loaded as type="module" the CartDrawer custom
+     element (loaded as a plain defer script from header.liquid) may
+     not have upgraded yet, leaving this.cart = null and causing a
+     redirect to /cart instead of opening the drawer.
+
+     We also polyfill window.getCurrentSellingPlanId() here because
+     selling-plans.js is only loaded by main-product.liquid, and its
+     absence causes a TypeError that silently aborts the submit handler.
+  ── ────────────────────────────────────────────────────────────── */
+  (function () {
+    /* 1. Polyfill so product-form.js line 39 never throws */
+    if (!window.getCurrentSellingPlanId) {
+      window.getCurrentSellingPlanId = function () {
+        var el = document.querySelector('product-subscriptions');
+        return el && el.getCurrentSellingPlanId ? el.getCurrentSellingPlanId() : '';
+      };
+    }
+
+    /* 2. After product-form custom element is defined, patch this.cart
+          on our specific instance if it was not set (or set to null). */
+    function patchCart() {
+      var pfEl = document.querySelector('#ProductInfo-{{ section.id }} product-form');
+      if (!pfEl) return;
+      if (!pfEl.cart) {
+        pfEl.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+      }
+    }
+
+    if (customElements.get('product-form')) {
+      patchCart();
+    } else {
+      customElements.whenDefined('product-form').then(patchCart);
+    }
+  })();
 </script>
 
 {%- if first_3d_model -%}
