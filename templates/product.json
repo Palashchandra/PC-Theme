@@ -16,6 +16,12 @@
           "type": "title",
           "settings": {}
         },
+        "buy_buttons_iTH7d9": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true
+          }
+        },
         "rating_eNbjbc": {
           "type": "rating",
           "settings": {}
@@ -35,6 +41,7 @@
       },
       "block_order": [
         "title_ikTMUr",
+        "buy_buttons_iTH7d9",
         "rating_eNbjbc",
         "sku_HDKU7q",
         "staging_connector_app_product_configurator_block_4mACXp"
