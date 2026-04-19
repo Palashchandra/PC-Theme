@@ -149,7 +149,16 @@
         }
       }
     },
-    "content_for_index": []
+    "content_for_index": [],
+    "blocks": {
+      "17035348516337071214": {
+        "type": "shopify://apps/advance-announcement-bar/blocks/notification-bar-embed/019d90c6-c1b1-7c14-9676-a8f238f0516c",
+        "disabled": false,
+        "settings": {
+          "preview_message": "Create and activate a bar in the app to render it here."
+        }
+      }
+    }
   },
   "presets": {
     "Default": {
