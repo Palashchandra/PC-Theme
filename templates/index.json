@@ -142,6 +142,10 @@
         "faq_item_rKKW7W",
         "faq_item_kKe76c"
       ],
+      "custom_css": [
+        ".image-faq-accordion__media-card.global-media-settings img {height: 600px; border: 0px solid transparent;}",
+        ".image-faq-accordion__media-card.global-media-settings {border: 0;}"
+      ],
       "name": "Image FAQ accordion",
       "settings": {
         "color_scheme": "background-1",
