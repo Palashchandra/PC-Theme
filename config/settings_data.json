@@ -153,7 +153,7 @@
     "blocks": {
       "7710692641002831921": {
         "type": "shopify://apps/advance-announcement-bar/blocks/notification-bar-embed/019da987-3a98-7f0c-98ce-9727adbc0f75",
-        "disabled": false,
+        "disabled": true,
         "settings": {
           "preview_message": "Create and activate a bar in the app to render it here."
         }
