@@ -11,13 +11,30 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "1777227020fbeb1a48": {
+      "type": "apps",
+      "blocks": {
+        "get_wholesaleready_registration_form_6NQAwi": {
+          "type": "shopify://apps/get-wholesaleready/blocks/registration-form/019dc55d-b076-721e-9562-c0d4d94b09c8",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "get_wholesaleready_registration_form_6NQAwi"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "1777227020fbeb1a48"
   ]
 }
