@@ -52,6 +52,13 @@
           "settings": {
             "show_dynamic_checkout": true
           }
+        },
+        "get_wholesaleready_wholesale_badge_QUXGAG": {
+          "type": "shopify://apps/get-wholesaleready/blocks/wholesale-badge/019dc55d-b076-721e-9562-c0d4d94b09c8",
+          "settings": {
+            "show_min_order": false,
+            "min_order_amount": 0
+          }
         }
       },
       "block_order": [
@@ -60,7 +67,8 @@
         "product_meta_VcF7jp",
         "price_dJCRap",
         "quantity_selector_nR94eF",
-        "buy_buttons_qGtf4h"
+        "buy_buttons_qGtf4h",
+        "get_wholesaleready_wholesale_badge_QUXGAG"
       ],
       "settings": {}
     },
