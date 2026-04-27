@@ -157,6 +157,11 @@
         "settings": {
           "preview_message": "Create and activate a bar in the app to render it here."
         }
+      },
+      "6927875883671548006": {
+        "type": "shopify://apps/get-wholesaleready/blocks/auto-tag/019dc55d-b076-721e-9562-c0d4d94b09c8",
+        "disabled": false,
+        "settings": {}
       }
     }
   },
