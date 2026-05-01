@@ -56,8 +56,8 @@
         "get_wholesaleready_wholesale_badge_QUXGAG": {
           "type": "shopify://apps/get-wholesaleready/blocks/wholesale-badge/019dc55d-b076-721e-9562-c0d4d94b09c8",
           "settings": {
-            "show_min_order": false,
-            "min_order_amount": 0
+            "show_min_order": true,
+            "min_order_amount": 2000
           }
         }
       },
