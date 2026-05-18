@@ -151,17 +151,17 @@
     },
     "content_for_index": [],
     "blocks": {
+      "6927875883671548006": {
+        "type": "shopify://apps/get-wholesaleready/blocks/auto-tag/019dc55d-b076-721e-9562-c0d4d94b09c8",
+        "disabled": false,
+        "settings": {}
+      },
       "7710692641002831921": {
         "type": "shopify://apps/advance-announcement-bar/blocks/notification-bar-embed/019da987-3a98-7f0c-98ce-9727adbc0f75",
         "disabled": false,
         "settings": {
           "preview_message": "Create and activate a bar in the app to render it here."
         }
-      },
-      "6927875883671548006": {
-        "type": "shopify://apps/get-wholesaleready/blocks/auto-tag/019dc55d-b076-721e-9562-c0d4d94b09c8",
-        "disabled": false,
-        "settings": {}
       }
     }
   },
