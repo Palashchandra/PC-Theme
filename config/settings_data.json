@@ -162,6 +162,28 @@
         "settings": {
           "preview_message": "Create and activate a bar in the app to render it here."
         }
+      },
+      "10821725052171585524": {
+        "type": "shopify://apps/get-wholesaleready/blocks/wholesale-ticker/019dc55d-b076-721e-9562-c0d4d94b09c8",
+        "disabled": false,
+        "settings": {
+          "reg_url": "/pages/wholesale-apply"
+        }
+      },
+      "4472319795666850408": {
+        "type": "shopify://apps/get-wholesaleready/blocks/wholesale-visibility/019dc55d-b076-721e-9562-c0d4d94b09c8",
+        "disabled": false,
+        "settings": {}
+      },
+      "5330072649759950435": {
+        "type": "shopify://apps/get-wholesaleready/blocks/company-team/019dc55d-b076-721e-9562-c0d4d94b09c8",
+        "disabled": false,
+        "settings": {}
+      },
+      "3534939974669719736": {
+        "type": "shopify://apps/get-wholesaleready/blocks/company-drafts/019dc55d-b076-721e-9562-c0d4d94b09c8",
+        "disabled": false,
+        "settings": {}
       }
     }
   },
