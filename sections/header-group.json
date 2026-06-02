@@ -33,8 +33,7 @@
     "header": {
       "type": "header",
       "custom_css": [
-        ".header__heading-link .h2 {font-size: 16px;}",
-        "a#cart-icon-bubble {display: none;}"
+        ".header__heading-link .h2 {font-size: 16px;}"
       ],
       "settings": {
         "logo_position": "middle-left",
