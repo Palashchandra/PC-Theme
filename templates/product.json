@@ -19,15 +19,6 @@
     "main": {
       "type": "pc-product-page",
       "blocks": {
-        "get_wholesaleready_save_to_list_Deit8W": {
-          "type": "shopify://apps/get-wholesaleready/blocks/save-to-list/019dc55d-b076-721e-9562-c0d4d94b09c8",
-          "settings": {
-            "button_text": "Save to List",
-            "show_icon": true,
-            "button_style": "outline",
-            "button_width": "full"
-          }
-        },
         "title_mBAegy": {
           "type": "title",
           "settings": {}
@@ -62,6 +53,15 @@
             "show_dynamic_checkout": true
           }
         },
+        "get_wholesaleready_save_to_list_Deit8W": {
+          "type": "shopify://apps/get-wholesaleready/blocks/save-to-list/019dc55d-b076-721e-9562-c0d4d94b09c8",
+          "settings": {
+            "button_text": "Save to List",
+            "show_icon": true,
+            "button_style": "outline",
+            "button_width": "full"
+          }
+        },
         "get_wholesaleready_wholesale_badge_QUXGAG": {
           "type": "shopify://apps/get-wholesaleready/blocks/wholesale-badge/019dc55d-b076-721e-9562-c0d4d94b09c8",
           "settings": {
@@ -71,13 +71,13 @@
         }
       },
       "block_order": [
-        "get_wholesaleready_save_to_list_Deit8W",
         "title_mBAegy",
         "sku_FwctyC",
         "product_meta_VcF7jp",
         "price_dJCRap",
         "quantity_selector_nR94eF",
         "buy_buttons_qGtf4h",
+        "get_wholesaleready_save_to_list_Deit8W",
         "get_wholesaleready_wholesale_badge_QUXGAG"
       ],
       "settings": {}
