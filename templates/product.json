@@ -56,7 +56,7 @@
         "get_wholesaleready_save_to_list_Deit8W": {
           "type": "shopify://apps/get-wholesaleready/blocks/save-to-list/019dc55d-b076-721e-9562-c0d4d94b09c8",
           "settings": {
-            "button_text": "Save to List",
+            "button_text": "Save to List 1",
             "show_icon": true,
             "button_style": "outline",
             "button_width": "full"
