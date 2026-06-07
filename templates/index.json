@@ -64,26 +64,6 @@
         "padding_bottom": 60
       }
     },
-    "1780682857a185771c": {
-      "type": "apps",
-      "blocks": {
-        "get_wholesaleready_save_to_list_tKUXQJ": {
-          "type": "shopify://apps/get-wholesaleready/blocks/save-to-list/019dc55d-b076-721e-9562-c0d4d94b09c8",
-          "settings": {
-            "button_text": "Save to List",
-            "show_icon": true,
-            "button_style": "outline",
-            "button_width": "full"
-          }
-        }
-      },
-      "block_order": [
-        "get_wholesaleready_save_to_list_tKUXQJ"
-      ],
-      "settings": {
-        "include_margins": true
-      }
-    },
     "testimonials_showcase_EF3igh": {
       "type": "testimonials-showcase",
       "blocks": {
@@ -184,7 +164,6 @@
     "split_hero_banner_c3fagh",
     "about_us_feature_QCMMJT",
     "pc_all_products_7yQ78f",
-    "1780682857a185771c",
     "testimonials_showcase_EF3igh",
     "image_faq_accordion_MdjfNg"
   ]
