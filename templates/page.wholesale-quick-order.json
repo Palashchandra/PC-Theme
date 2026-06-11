@@ -22,7 +22,9 @@
       "blocks": {
         "get_wholesaleready_quick_order_6xRTHU": {
           "type": "shopify://apps/get-wholesaleready/blocks/quick-order/019dc55d-b076-721e-9562-c0d4d94b09c8",
-          "settings": {}
+          "settings": {
+            "apply_page": "wholesale-registration"
+          }
         }
       },
       "block_order": [
